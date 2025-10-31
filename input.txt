@@ -1,0 +1,8 @@
+\Fn ( Tournament ) {
+    a \gets b;
+    \While ( a < b ) {
+        \If ( x < y ) {
+            \KwRet z;
+        }
+    }
+}

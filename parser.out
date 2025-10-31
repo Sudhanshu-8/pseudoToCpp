@@ -1,0 +1,460 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    COMMA
+
+Grammar
+
+Rule 0     S' -> program
+Rule 1     program -> function
+Rule 2     function -> FN LPAREN IDENT RPAREN LBRACE statements RBRACE
+Rule 3     statements -> statements statement
+Rule 4     statements -> statement
+Rule 5     statement -> IDENT ASSIGN IDENT SEMICOLON
+Rule 6     statement -> IDENT ASSIGN NUMBER SEMICOLON
+Rule 7     statement -> WHILE LPAREN condition RPAREN LBRACE statements RBRACE
+Rule 8     statement -> IF LPAREN condition RPAREN LBRACE statements RBRACE
+Rule 9     statement -> BREAK SEMICOLON
+Rule 10    statement -> RETURN IDENT SEMICOLON
+Rule 11    condition -> IDENT OP IDENT
+
+Terminals, with rules where they appear
+
+ASSIGN               : 5 6
+BREAK                : 9
+COMMA                : 
+FN                   : 2
+IDENT                : 2 5 5 6 10 11 11
+IF                   : 8
+LBRACE               : 2 7 8
+LPAREN               : 2 7 8
+NUMBER               : 6
+OP                   : 11
+RBRACE               : 2 7 8
+RETURN               : 10
+RPAREN               : 2 7 8
+SEMICOLON            : 5 6 9 10
+WHILE                : 7
+error                : 
+
+Nonterminals, with rules where they appear
+
+condition            : 7 8
+function             : 1
+program              : 0
+statement            : 3 4
+statements           : 2 3 7 8
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . function
+    (2) function -> . FN LPAREN IDENT RPAREN LBRACE statements RBRACE
+
+    FN              shift and go to state 3
+
+    program                        shift and go to state 1
+    function                       shift and go to state 2
+
+state 1
+
+    (0) S' -> program .
+
+
+
+state 2
+
+    (1) program -> function .
+
+    $end            reduce using rule 1 (program -> function .)
+
+
+state 3
+
+    (2) function -> FN . LPAREN IDENT RPAREN LBRACE statements RBRACE
+
+    LPAREN          shift and go to state 4
+
+
+state 4
+
+    (2) function -> FN LPAREN . IDENT RPAREN LBRACE statements RBRACE
+
+    IDENT           shift and go to state 5
+
+
+state 5
+
+    (2) function -> FN LPAREN IDENT . RPAREN LBRACE statements RBRACE
+
+    RPAREN          shift and go to state 6
+
+
+state 6
+
+    (2) function -> FN LPAREN IDENT RPAREN . LBRACE statements RBRACE
+
+    LBRACE          shift and go to state 7
+
+
+state 7
+
+    (2) function -> FN LPAREN IDENT RPAREN LBRACE . statements RBRACE
+    (3) statements -> . statements statement
+    (4) statements -> . statement
+    (5) statement -> . IDENT ASSIGN IDENT SEMICOLON
+    (6) statement -> . IDENT ASSIGN NUMBER SEMICOLON
+    (7) statement -> . WHILE LPAREN condition RPAREN LBRACE statements RBRACE
+    (8) statement -> . IF LPAREN condition RPAREN LBRACE statements RBRACE
+    (9) statement -> . BREAK SEMICOLON
+    (10) statement -> . RETURN IDENT SEMICOLON
+
+    IDENT           shift and go to state 8
+    WHILE           shift and go to state 11
+    IF              shift and go to state 12
+    BREAK           shift and go to state 13
+    RETURN          shift and go to state 14
+
+    statements                     shift and go to state 9
+    statement                      shift and go to state 10
+
+state 8
+
+    (5) statement -> IDENT . ASSIGN IDENT SEMICOLON
+    (6) statement -> IDENT . ASSIGN NUMBER SEMICOLON
+
+    ASSIGN          shift and go to state 15
+
+
+state 9
+
+    (2) function -> FN LPAREN IDENT RPAREN LBRACE statements . RBRACE
+    (3) statements -> statements . statement
+    (5) statement -> . IDENT ASSIGN IDENT SEMICOLON
+    (6) statement -> . IDENT ASSIGN NUMBER SEMICOLON
+    (7) statement -> . WHILE LPAREN condition RPAREN LBRACE statements RBRACE
+    (8) statement -> . IF LPAREN condition RPAREN LBRACE statements RBRACE
+    (9) statement -> . BREAK SEMICOLON
+    (10) statement -> . RETURN IDENT SEMICOLON
+
+    RBRACE          shift and go to state 16
+    IDENT           shift and go to state 8
+    WHILE           shift and go to state 11
+    IF              shift and go to state 12
+    BREAK           shift and go to state 13
+    RETURN          shift and go to state 14
+
+    statement                      shift and go to state 17
+
+state 10
+
+    (4) statements -> statement .
+
+    RBRACE          reduce using rule 4 (statements -> statement .)
+    IDENT           reduce using rule 4 (statements -> statement .)
+    WHILE           reduce using rule 4 (statements -> statement .)
+    IF              reduce using rule 4 (statements -> statement .)
+    BREAK           reduce using rule 4 (statements -> statement .)
+    RETURN          reduce using rule 4 (statements -> statement .)
+
+
+state 11
+
+    (7) statement -> WHILE . LPAREN condition RPAREN LBRACE statements RBRACE
+
+    LPAREN          shift and go to state 18
+
+
+state 12
+
+    (8) statement -> IF . LPAREN condition RPAREN LBRACE statements RBRACE
+
+    LPAREN          shift and go to state 19
+
+
+state 13
+
+    (9) statement -> BREAK . SEMICOLON
+
+    SEMICOLON       shift and go to state 20
+
+
+state 14
+
+    (10) statement -> RETURN . IDENT SEMICOLON
+
+    IDENT           shift and go to state 21
+
+
+state 15
+
+    (5) statement -> IDENT ASSIGN . IDENT SEMICOLON
+    (6) statement -> IDENT ASSIGN . NUMBER SEMICOLON
+
+    IDENT           shift and go to state 22
+    NUMBER          shift and go to state 23
+
+
+state 16
+
+    (2) function -> FN LPAREN IDENT RPAREN LBRACE statements RBRACE .
+
+    $end            reduce using rule 2 (function -> FN LPAREN IDENT RPAREN LBRACE statements RBRACE .)
+
+
+state 17
+
+    (3) statements -> statements statement .
+
+    RBRACE          reduce using rule 3 (statements -> statements statement .)
+    IDENT           reduce using rule 3 (statements -> statements statement .)
+    WHILE           reduce using rule 3 (statements -> statements statement .)
+    IF              reduce using rule 3 (statements -> statements statement .)
+    BREAK           reduce using rule 3 (statements -> statements statement .)
+    RETURN          reduce using rule 3 (statements -> statements statement .)
+
+
+state 18
+
+    (7) statement -> WHILE LPAREN . condition RPAREN LBRACE statements RBRACE
+    (11) condition -> . IDENT OP IDENT
+
+    IDENT           shift and go to state 25
+
+    condition                      shift and go to state 24
+
+state 19
+
+    (8) statement -> IF LPAREN . condition RPAREN LBRACE statements RBRACE
+    (11) condition -> . IDENT OP IDENT
+
+    IDENT           shift and go to state 25
+
+    condition                      shift and go to state 26
+
+state 20
+
+    (9) statement -> BREAK SEMICOLON .
+
+    RBRACE          reduce using rule 9 (statement -> BREAK SEMICOLON .)
+    IDENT           reduce using rule 9 (statement -> BREAK SEMICOLON .)
+    WHILE           reduce using rule 9 (statement -> BREAK SEMICOLON .)
+    IF              reduce using rule 9 (statement -> BREAK SEMICOLON .)
+    BREAK           reduce using rule 9 (statement -> BREAK SEMICOLON .)
+    RETURN          reduce using rule 9 (statement -> BREAK SEMICOLON .)
+
+
+state 21
+
+    (10) statement -> RETURN IDENT . SEMICOLON
+
+    SEMICOLON       shift and go to state 27
+
+
+state 22
+
+    (5) statement -> IDENT ASSIGN IDENT . SEMICOLON
+
+    SEMICOLON       shift and go to state 28
+
+
+state 23
+
+    (6) statement -> IDENT ASSIGN NUMBER . SEMICOLON
+
+    SEMICOLON       shift and go to state 29
+
+
+state 24
+
+    (7) statement -> WHILE LPAREN condition . RPAREN LBRACE statements RBRACE
+
+    RPAREN          shift and go to state 30
+
+
+state 25
+
+    (11) condition -> IDENT . OP IDENT
+
+    OP              shift and go to state 31
+
+
+state 26
+
+    (8) statement -> IF LPAREN condition . RPAREN LBRACE statements RBRACE
+
+    RPAREN          shift and go to state 32
+
+
+state 27
+
+    (10) statement -> RETURN IDENT SEMICOLON .
+
+    RBRACE          reduce using rule 10 (statement -> RETURN IDENT SEMICOLON .)
+    IDENT           reduce using rule 10 (statement -> RETURN IDENT SEMICOLON .)
+    WHILE           reduce using rule 10 (statement -> RETURN IDENT SEMICOLON .)
+    IF              reduce using rule 10 (statement -> RETURN IDENT SEMICOLON .)
+    BREAK           reduce using rule 10 (statement -> RETURN IDENT SEMICOLON .)
+    RETURN          reduce using rule 10 (statement -> RETURN IDENT SEMICOLON .)
+
+
+state 28
+
+    (5) statement -> IDENT ASSIGN IDENT SEMICOLON .
+
+    RBRACE          reduce using rule 5 (statement -> IDENT ASSIGN IDENT SEMICOLON .)
+    IDENT           reduce using rule 5 (statement -> IDENT ASSIGN IDENT SEMICOLON .)
+    WHILE           reduce using rule 5 (statement -> IDENT ASSIGN IDENT SEMICOLON .)
+    IF              reduce using rule 5 (statement -> IDENT ASSIGN IDENT SEMICOLON .)
+    BREAK           reduce using rule 5 (statement -> IDENT ASSIGN IDENT SEMICOLON .)
+    RETURN          reduce using rule 5 (statement -> IDENT ASSIGN IDENT SEMICOLON .)
+
+
+state 29
+
+    (6) statement -> IDENT ASSIGN NUMBER SEMICOLON .
+
+    RBRACE          reduce using rule 6 (statement -> IDENT ASSIGN NUMBER SEMICOLON .)
+    IDENT           reduce using rule 6 (statement -> IDENT ASSIGN NUMBER SEMICOLON .)
+    WHILE           reduce using rule 6 (statement -> IDENT ASSIGN NUMBER SEMICOLON .)
+    IF              reduce using rule 6 (statement -> IDENT ASSIGN NUMBER SEMICOLON .)
+    BREAK           reduce using rule 6 (statement -> IDENT ASSIGN NUMBER SEMICOLON .)
+    RETURN          reduce using rule 6 (statement -> IDENT ASSIGN NUMBER SEMICOLON .)
+
+
+state 30
+
+    (7) statement -> WHILE LPAREN condition RPAREN . LBRACE statements RBRACE
+
+    LBRACE          shift and go to state 33
+
+
+state 31
+
+    (11) condition -> IDENT OP . IDENT
+
+    IDENT           shift and go to state 34
+
+
+state 32
+
+    (8) statement -> IF LPAREN condition RPAREN . LBRACE statements RBRACE
+
+    LBRACE          shift and go to state 35
+
+
+state 33
+
+    (7) statement -> WHILE LPAREN condition RPAREN LBRACE . statements RBRACE
+    (3) statements -> . statements statement
+    (4) statements -> . statement
+    (5) statement -> . IDENT ASSIGN IDENT SEMICOLON
+    (6) statement -> . IDENT ASSIGN NUMBER SEMICOLON
+    (7) statement -> . WHILE LPAREN condition RPAREN LBRACE statements RBRACE
+    (8) statement -> . IF LPAREN condition RPAREN LBRACE statements RBRACE
+    (9) statement -> . BREAK SEMICOLON
+    (10) statement -> . RETURN IDENT SEMICOLON
+
+    IDENT           shift and go to state 8
+    WHILE           shift and go to state 11
+    IF              shift and go to state 12
+    BREAK           shift and go to state 13
+    RETURN          shift and go to state 14
+
+    statements                     shift and go to state 36
+    statement                      shift and go to state 10
+
+state 34
+
+    (11) condition -> IDENT OP IDENT .
+
+    RPAREN          reduce using rule 11 (condition -> IDENT OP IDENT .)
+
+
+state 35
+
+    (8) statement -> IF LPAREN condition RPAREN LBRACE . statements RBRACE
+    (3) statements -> . statements statement
+    (4) statements -> . statement
+    (5) statement -> . IDENT ASSIGN IDENT SEMICOLON
+    (6) statement -> . IDENT ASSIGN NUMBER SEMICOLON
+    (7) statement -> . WHILE LPAREN condition RPAREN LBRACE statements RBRACE
+    (8) statement -> . IF LPAREN condition RPAREN LBRACE statements RBRACE
+    (9) statement -> . BREAK SEMICOLON
+    (10) statement -> . RETURN IDENT SEMICOLON
+
+    IDENT           shift and go to state 8
+    WHILE           shift and go to state 11
+    IF              shift and go to state 12
+    BREAK           shift and go to state 13
+    RETURN          shift and go to state 14
+
+    statements                     shift and go to state 37
+    statement                      shift and go to state 10
+
+state 36
+
+    (7) statement -> WHILE LPAREN condition RPAREN LBRACE statements . RBRACE
+    (3) statements -> statements . statement
+    (5) statement -> . IDENT ASSIGN IDENT SEMICOLON
+    (6) statement -> . IDENT ASSIGN NUMBER SEMICOLON
+    (7) statement -> . WHILE LPAREN condition RPAREN LBRACE statements RBRACE
+    (8) statement -> . IF LPAREN condition RPAREN LBRACE statements RBRACE
+    (9) statement -> . BREAK SEMICOLON
+    (10) statement -> . RETURN IDENT SEMICOLON
+
+    RBRACE          shift and go to state 38
+    IDENT           shift and go to state 8
+    WHILE           shift and go to state 11
+    IF              shift and go to state 12
+    BREAK           shift and go to state 13
+    RETURN          shift and go to state 14
+
+    statement                      shift and go to state 17
+
+state 37
+
+    (8) statement -> IF LPAREN condition RPAREN LBRACE statements . RBRACE
+    (3) statements -> statements . statement
+    (5) statement -> . IDENT ASSIGN IDENT SEMICOLON
+    (6) statement -> . IDENT ASSIGN NUMBER SEMICOLON
+    (7) statement -> . WHILE LPAREN condition RPAREN LBRACE statements RBRACE
+    (8) statement -> . IF LPAREN condition RPAREN LBRACE statements RBRACE
+    (9) statement -> . BREAK SEMICOLON
+    (10) statement -> . RETURN IDENT SEMICOLON
+
+    RBRACE          shift and go to state 39
+    IDENT           shift and go to state 8
+    WHILE           shift and go to state 11
+    IF              shift and go to state 12
+    BREAK           shift and go to state 13
+    RETURN          shift and go to state 14
+
+    statement                      shift and go to state 17
+
+state 38
+
+    (7) statement -> WHILE LPAREN condition RPAREN LBRACE statements RBRACE .
+
+    RBRACE          reduce using rule 7 (statement -> WHILE LPAREN condition RPAREN LBRACE statements RBRACE .)
+    IDENT           reduce using rule 7 (statement -> WHILE LPAREN condition RPAREN LBRACE statements RBRACE .)
+    WHILE           reduce using rule 7 (statement -> WHILE LPAREN condition RPAREN LBRACE statements RBRACE .)
+    IF              reduce using rule 7 (statement -> WHILE LPAREN condition RPAREN LBRACE statements RBRACE .)
+    BREAK           reduce using rule 7 (statement -> WHILE LPAREN condition RPAREN LBRACE statements RBRACE .)
+    RETURN          reduce using rule 7 (statement -> WHILE LPAREN condition RPAREN LBRACE statements RBRACE .)
+
+
+state 39
+
+    (8) statement -> IF LPAREN condition RPAREN LBRACE statements RBRACE .
+
+    RBRACE          reduce using rule 8 (statement -> IF LPAREN condition RPAREN LBRACE statements RBRACE .)
+    IDENT           reduce using rule 8 (statement -> IF LPAREN condition RPAREN LBRACE statements RBRACE .)
+    WHILE           reduce using rule 8 (statement -> IF LPAREN condition RPAREN LBRACE statements RBRACE .)
+    IF              reduce using rule 8 (statement -> IF LPAREN condition RPAREN LBRACE statements RBRACE .)
+    BREAK           reduce using rule 8 (statement -> IF LPAREN condition RPAREN LBRACE statements RBRACE .)
+    RETURN          reduce using rule 8 (statement -> IF LPAREN condition RPAREN LBRACE statements RBRACE .)
+
