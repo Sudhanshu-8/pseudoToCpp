@@ -1,30 +1,15 @@
-# app.py
-import sys
-from parser import parser
+from parser import parser, to_cpp
 
-def main():
-    if len(sys.argv) < 2:
-        print("Usage: python app.py <inputfile>")
-        sys.exit(1)
+with open("input.txt") as f:
+    data = f.read()
 
-    input_file = sys.argv[1]
+print("🔹 Starting parsing... You’ll be asked for variable datatypes where needed.\n")
 
-    with open(input_file, "r", encoding="utf-8") as f:
-        data = f.read()
+result = parser.parse(data)
 
-    result = parser.parse(data)
+cpp_code = to_cpp(result)
+print("\n✅ Generated C++ code:\n")
+print(cpp_code)
 
-    if not result:
-        print("❌ Parsing failed. Check syntax in input file.")
-        sys.exit(1)
-
-    output_file = input_file.replace(".txt", "_converted.cpp")
-
-    with open(output_file, "w", encoding="utf-8") as f:
-        f.write(result)
-
-    print(f"\n✅ Generated C++ code saved to: {output_file}\n")
-    print(result)
-
-if __name__ == "__main__":
-    main()
+with open("output.cpp", "w") as f:
+    f.write(cpp_code)
