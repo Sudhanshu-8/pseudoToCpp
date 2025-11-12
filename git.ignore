@@ -3,3 +3,9 @@ parser.out
 parsetab.py
 input.txt
 output.cpp
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
