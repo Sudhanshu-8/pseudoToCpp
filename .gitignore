@@ -4,5 +4,6 @@ output.cpp
 parser.out
 parsetab.py
 parser.out
+parser.out
 *.out
 __pycache__/parsetab.cpython-312.pyc
