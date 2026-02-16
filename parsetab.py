@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'ASSIGN BREAK COMMA FN IDENT IF LBRACE LPAREN NUMBER OP RBRACE RETURN RPAREN SEMICOLON WHILEprogram : functionfunction : FN LPAREN IDENT RPAREN LBRACE statements RBRACEstatements : statements statementstatements : statementstatement : IDENT ASSIGN IDENT SEMICOLONstatement : IDENT ASSIGN NUMBER SEMICOLONstatement : WHILE LPAREN condition RPAREN LBRACE statements RBRACEstatement : IF LPAREN condition RPAREN LBRACE statements RBRACEstatement : BREAK SEMICOLONstatement : RETURN IDENT SEMICOLONcondition : IDENT OP IDENT'
+_lr_signature = 'AND ASSIGN BOOL BREAK CHAR COMMA CONTINUE DIVIDE ELSE EQ FN FOR GE GT ID IF LBRACE LE LPAREN LT MINUS MOD NE NOT NUMBER OR PLUS PRINT RBRACE RETURN RPAREN SCAN SEMICOLON STRING TIMES WHILEprogram : functionfunction : FN ID LPAREN param_list_opt RPAREN LBRACE stmt_list RBRACEparam_list_opt : param_list\n| emptyparam_list : ID\n| param_list COMMA IDstmt_list : stmt_list statement\n| statement\n| emptystatement : ID ASSIGN NUMBER SEMICOLON\n| ID ASSIGN ID SEMICOLONstatement : ID ASSIGN expression SEMICOLONstatement : IF LPAREN condition RPAREN LBRACE stmt_list RBRACEstatement : WHILE LPAREN condition RPAREN LBRACE stmt_list RBRACEstatement : FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACEfor_init_opt : ID ASSIGN NUMBER\n| ID ASSIGN ID\n| ID ASSIGN expression\n| emptycondition_opt : condition\n| emptyfor_update_opt : ID ASSIGN NUMBER\n| ID ASSIGN ID\n| ID ASSIGN expression\n| emptystatement : RETURN expression SEMICOLON\n| RETURN NUMBER SEMICOLON\n| RETURN ID SEMICOLONstatement : ID LPAREN argument_list_opt RPAREN SEMICOLONexpression : expression PLUS term\n| expression MINUS termexpression : termterm : term TIMES factor\n| term DIVIDE factor\n| term MOD factorterm : factorfactor : NUMBERfactor : IDfactor : LPAREN expression RPARENcondition : expression LT expression\n| expression GT expression\n| expression LE expression\n| expression GE expression\n| expression EQ expression\n| expression NE expressionempty :factor : ID LPAREN argument_list_opt RPARENargument_list_opt : argument_list\n| emptyargument_list : argument\n| argument_list COMMA argumentargument : expression'
     
-_lr_action_items = {'FN':([0,],[3,]),'$end':([1,2,16,],[0,-1,-2,]),'LPAREN':([3,11,12,],[4,18,19,]),'IDENT':([4,7,9,10,14,15,17,18,19,20,27,28,29,31,33,35,36,37,38,39,],[5,8,8,-4,21,22,-3,25,25,-9,-10,-5,-6,34,8,8,8,8,-7,-8,]),'RPAREN':([5,24,26,34,],[6,30,32,-11,]),'LBRACE':([6,30,32,],[7,33,35,]),'WHILE':([7,9,10,17,20,27,28,29,33,35,36,37,38,39,],[11,11,-4,-3,-9,-10,-5,-6,11,11,11,11,-7,-8,]),'IF':([7,9,10,17,20,27,28,29,33,35,36,37,38,39,],[12,12,-4,-3,-9,-10,-5,-6,12,12,12,12,-7,-8,]),'BREAK':([7,9,10,17,20,27,28,29,33,35,36,37,38,39,],[13,13,-4,-3,-9,-10,-5,-6,13,13,13,13,-7,-8,]),'RETURN':([7,9,10,17,20,27,28,29,33,35,36,37,38,39,],[14,14,-4,-3,-9,-10,-5,-6,14,14,14,14,-7,-8,]),'ASSIGN':([8,],[15,]),'RBRACE':([9,10,17,20,27,28,29,36,37,38,39,],[16,-4,-3,-9,-10,-5,-6,38,39,-7,-8,]),'SEMICOLON':([13,21,22,23,],[20,27,28,29,]),'NUMBER':([15,],[23,]),'OP':([25,],[31,]),}
+_lr_action_items = {'FN':([0,],[3,]),'$end':([1,2,24,],[0,-1,-2,]),'ID':([3,5,11,12,15,16,17,21,22,23,25,26,27,28,34,51,52,53,54,55,56,57,58,59,61,62,63,65,67,68,69,70,71,72,74,75,83,85,92,100,101,102,103,104,109,110,114,115,],[4,6,13,14,14,-8,-9,31,35,38,-7,38,38,49,38,-26,38,38,-27,-28,38,38,38,38,-11,-10,-12,38,38,38,38,38,38,38,38,96,-29,14,14,14,14,106,-13,-14,111,14,14,-15,]),'LPAREN':([4,14,18,19,20,21,22,23,26,27,31,34,35,38,52,53,56,57,58,59,65,67,68,69,70,71,72,74,75,96,109,111,],[5,23,26,27,28,34,34,34,34,34,56,34,56,56,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,56,34,56,]),'RPAREN':([5,6,7,8,9,13,23,32,33,38,39,40,41,42,43,44,45,47,56,60,76,77,78,79,80,81,82,84,86,87,88,89,90,91,99,102,105,107,111,112,113,],[-46,-5,10,-3,-4,-6,-46,-32,-36,-38,64,-48,-49,-50,-52,-37,66,73,-46,82,-30,-31,99,-33,-34,-35,-39,-51,-40,-41,-42,-43,-44,-45,-47,-46,108,-25,-23,-22,-24,]),'COMMA':([6,8,13,32,33,38,40,42,43,44,76,77,79,80,81,82,84,99,],[-5,11,-6,-32,-36,-38,65,-50,-52,-37,-30,-31,-33,-34,-35,-39,-51,-47,]),'LBRACE':([10,66,73,108,],[12,85,92,110,]),'IF':([12,15,16,17,25,51,54,55,61,62,63,83,85,92,100,101,103,104,110,114,115,],[18,18,-8,-9,-7,-26,-27,-28,-11,-10,-12,-29,18,18,18,18,-13,-14,18,18,-15,]),'WHILE':([12,15,16,17,25,51,54,55,61,62,63,83,85,92,100,101,103,104,110,114,115,],[19,19,-8,-9,-7,-26,-27,-28,-11,-10,-12,-29,19,19,19,19,-13,-14,19,19,-15,]),'FOR':([12,15,16,17,25,51,54,55,61,62,63,83,85,92,100,101,103,104,110,114,115,],[20,20,-8,-9,-7,-26,-27,-28,-11,-10,-12,-29,20,20,20,20,-13,-14,20,20,-15,]),'RETURN':([12,15,16,17,25,51,54,55,61,62,63,83,85,92,100,101,103,104,110,114,115,],[21,21,-8,-9,-7,-26,-27,-28,-11,-10,-12,-29,21,21,21,21,-13,-14,21,21,-15,]),'RBRACE':([12,15,16,17,25,51,54,55,61,62,63,83,85,92,100,101,103,104,110,114,115,],[-46,24,-8,-9,-7,-26,-27,-28,-11,-10,-12,-29,-46,-46,103,104,-13,-14,-46,115,-15,]),'ASSIGN':([14,49,106,],[22,75,109,]),'NUMBER':([21,22,23,26,27,34,52,53,56,57,58,59,65,67,68,69,70,71,72,74,75,109,],[30,36,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,97,112,]),'SEMICOLON':([28,29,30,31,32,33,35,36,37,38,44,48,50,64,74,76,77,79,80,81,82,86,87,88,89,90,91,93,94,95,96,97,98,99,],[-46,51,54,55,-32,-36,61,62,63,-38,-37,74,-19,83,-46,-30,-31,-33,-34,-35,-39,-40,-41,-42,-43,-44,-45,102,-20,-21,-17,-16,-18,-47,]),'PLUS':([29,30,31,32,33,35,36,37,38,43,44,46,60,76,77,79,80,81,82,86,87,88,89,90,91,96,97,98,99,111,112,113,],[52,-37,-38,-32,-36,-38,-37,52,-38,52,-37,52,52,-30,-31,-33,-34,-35,-39,52,52,52,52,52,52,-38,-37,52,-47,-38,-37,52,]),'MINUS':([29,30,31,32,33,35,36,37,38,43,44,46,60,76,77,79,80,81,82,86,87,88,89,90,91,96,97,98,99,111,112,113,],[53,-37,-38,-32,-36,-38,-37,53,-38,53,-37,53,53,-30,-31,-33,-34,-35,-39,53,53,53,53,53,53,-38,-37,53,-47,-38,-37,53,]),'TIMES':([30,31,32,33,35,36,38,44,76,77,79,80,81,82,96,97,99,111,112,],[-37,-38,57,-36,-38,-37,-38,-37,57,57,-33,-34,-35,-39,-38,-37,-47,-38,-37,]),'DIVIDE':([30,31,32,33,35,36,38,44,76,77,79,80,81,82,96,97,99,111,112,],[-37,-38,58,-36,-38,-37,-38,-37,58,58,-33,-34,-35,-39,-38,-37,-47,-38,-37,]),'MOD':([30,31,32,33,35,36,38,44,76,77,79,80,81,82,96,97,99,111,112,],[-37,-38,59,-36,-38,-37,-38,-37,59,59,-33,-34,-35,-39,-38,-37,-47,-38,-37,]),'LT':([32,33,38,44,46,76,77,79,80,81,82,99,],[-32,-36,-38,-37,67,-30,-31,-33,-34,-35,-39,-47,]),'GT':([32,33,38,44,46,76,77,79,80,81,82,99,],[-32,-36,-38,-37,68,-30,-31,-33,-34,-35,-39,-47,]),'LE':([32,33,38,44,46,76,77,79,80,81,82,99,],[-32,-36,-38,-37,69,-30,-31,-33,-34,-35,-39,-47,]),'GE':([32,33,38,44,46,76,77,79,80,81,82,99,],[-32,-36,-38,-37,70,-30,-31,-33,-34,-35,-39,-47,]),'EQ':([32,33,38,44,46,76,77,79,80,81,82,99,],[-32,-36,-38,-37,71,-30,-31,-33,-34,-35,-39,-47,]),'NE':([32,33,38,44,46,76,77,79,80,81,82,99,],[-32,-36,-38,-37,72,-30,-31,-33,-34,-35,-39,-47,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'program':([0,],[1,]),'function':([0,],[2,]),'statements':([7,33,35,],[9,36,37,]),'statement':([7,9,33,35,36,37,],[10,17,10,10,17,17,]),'condition':([18,19,],[24,26,]),}
+_lr_goto_items = {'program':([0,],[1,]),'function':([0,],[2,]),'param_list_opt':([5,],[7,]),'param_list':([5,],[8,]),'empty':([5,12,23,28,56,74,85,92,102,110,],[9,17,41,50,41,95,17,17,107,17,]),'stmt_list':([12,85,92,110,],[15,100,101,114,]),'statement':([12,15,85,92,100,101,110,114,],[16,25,16,16,25,25,16,25,]),'expression':([21,22,23,26,27,34,56,65,67,68,69,70,71,72,74,75,109,],[29,37,43,46,46,60,43,43,86,87,88,89,90,91,46,98,113,]),'term':([21,22,23,26,27,34,52,53,56,65,67,68,69,70,71,72,74,75,109,],[32,32,32,32,32,32,76,77,32,32,32,32,32,32,32,32,32,32,32,]),'factor':([21,22,23,26,27,34,52,53,56,57,58,59,65,67,68,69,70,71,72,74,75,109,],[33,33,33,33,33,33,33,33,33,79,80,81,33,33,33,33,33,33,33,33,33,33,]),'argument_list_opt':([23,56,],[39,78,]),'argument_list':([23,56,],[40,40,]),'argument':([23,56,65,],[42,42,84,]),'condition':([26,27,74,],[45,47,94,]),'for_init_opt':([28,],[48,]),'condition_opt':([74,],[93,]),'for_update_opt':([102,],[105,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,15 +27,56 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> program","S'",1,None,None,None),
-  ('program -> function','program',1,'p_program','parser.py',10),
-  ('function -> FN LPAREN IDENT RPAREN LBRACE statements RBRACE','function',7,'p_function','parser.py',18),
-  ('statements -> statements statement','statements',2,'p_statements_multiple','parser.py',22),
-  ('statements -> statement','statements',1,'p_statements_single','parser.py',26),
-  ('statement -> IDENT ASSIGN IDENT SEMICOLON','statement',4,'p_statement_assign','parser.py',30),
-  ('statement -> IDENT ASSIGN NUMBER SEMICOLON','statement',4,'p_statement_assign_num','parser.py',34),
-  ('statement -> WHILE LPAREN condition RPAREN LBRACE statements RBRACE','statement',7,'p_statement_while','parser.py',38),
-  ('statement -> IF LPAREN condition RPAREN LBRACE statements RBRACE','statement',7,'p_statement_if','parser.py',42),
-  ('statement -> BREAK SEMICOLON','statement',2,'p_statement_break','parser.py',46),
-  ('statement -> RETURN IDENT SEMICOLON','statement',3,'p_statement_return','parser.py',50),
-  ('condition -> IDENT OP IDENT','condition',3,'p_condition','parser.py',54),
+  ('program -> function','program',1,'p_program','parser.py',119),
+  ('function -> FN ID LPAREN param_list_opt RPAREN LBRACE stmt_list RBRACE','function',8,'p_function','parser.py',124),
+  ('param_list_opt -> param_list','param_list_opt',1,'p_param_list_opt','parser.py',148),
+  ('param_list_opt -> empty','param_list_opt',1,'p_param_list_opt','parser.py',149),
+  ('param_list -> ID','param_list',1,'p_param_list','parser.py',157),
+  ('param_list -> param_list COMMA ID','param_list',3,'p_param_list','parser.py',158),
+  ('stmt_list -> stmt_list statement','stmt_list',2,'p_stmt_list','parser.py',166),
+  ('stmt_list -> statement','stmt_list',1,'p_stmt_list','parser.py',167),
+  ('stmt_list -> empty','stmt_list',1,'p_stmt_list','parser.py',168),
+  ('statement -> ID ASSIGN NUMBER SEMICOLON','statement',4,'p_statement_assign_simple','parser.py',178),
+  ('statement -> ID ASSIGN ID SEMICOLON','statement',4,'p_statement_assign_simple','parser.py',179),
+  ('statement -> ID ASSIGN expression SEMICOLON','statement',4,'p_statement_assign_expr','parser.py',187),
+  ('statement -> IF LPAREN condition RPAREN LBRACE stmt_list RBRACE','statement',7,'p_statement_if','parser.py',195),
+  ('statement -> WHILE LPAREN condition RPAREN LBRACE stmt_list RBRACE','statement',7,'p_statement_while','parser.py',200),
+  ('statement -> FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE','statement',11,'p_statement_for','parser.py',205),
+  ('for_init_opt -> ID ASSIGN NUMBER','for_init_opt',3,'p_for_init_opt','parser.py',216),
+  ('for_init_opt -> ID ASSIGN ID','for_init_opt',3,'p_for_init_opt','parser.py',217),
+  ('for_init_opt -> ID ASSIGN expression','for_init_opt',3,'p_for_init_opt','parser.py',218),
+  ('for_init_opt -> empty','for_init_opt',1,'p_for_init_opt','parser.py',219),
+  ('condition_opt -> condition','condition_opt',1,'p_condition_opt','parser.py',232),
+  ('condition_opt -> empty','condition_opt',1,'p_condition_opt','parser.py',233),
+  ('for_update_opt -> ID ASSIGN NUMBER','for_update_opt',3,'p_for_update_opt','parser.py',238),
+  ('for_update_opt -> ID ASSIGN ID','for_update_opt',3,'p_for_update_opt','parser.py',239),
+  ('for_update_opt -> ID ASSIGN expression','for_update_opt',3,'p_for_update_opt','parser.py',240),
+  ('for_update_opt -> empty','for_update_opt',1,'p_for_update_opt','parser.py',241),
+  ('statement -> RETURN expression SEMICOLON','statement',3,'p_statement_return','parser.py',255),
+  ('statement -> RETURN NUMBER SEMICOLON','statement',3,'p_statement_return','parser.py',256),
+  ('statement -> RETURN ID SEMICOLON','statement',3,'p_statement_return','parser.py',257),
+  ('statement -> ID LPAREN argument_list_opt RPAREN SEMICOLON','statement',5,'p_statement_function_call','parser.py',270),
+  ('expression -> expression PLUS term','expression',3,'p_expression_binop_addsub','parser.py',284),
+  ('expression -> expression MINUS term','expression',3,'p_expression_binop_addsub','parser.py',285),
+  ('expression -> term','expression',1,'p_expression_term','parser.py',290),
+  ('term -> term TIMES factor','term',3,'p_term_binop','parser.py',295),
+  ('term -> term DIVIDE factor','term',3,'p_term_binop','parser.py',296),
+  ('term -> term MOD factor','term',3,'p_term_binop','parser.py',297),
+  ('term -> factor','term',1,'p_term_factor','parser.py',302),
+  ('factor -> NUMBER','factor',1,'p_factor_number','parser.py',307),
+  ('factor -> ID','factor',1,'p_factor_id','parser.py',312),
+  ('factor -> LPAREN expression RPAREN','factor',3,'p_factor_group','parser.py',321),
+  ('condition -> expression LT expression','condition',3,'p_condition','parser.py',326),
+  ('condition -> expression GT expression','condition',3,'p_condition','parser.py',327),
+  ('condition -> expression LE expression','condition',3,'p_condition','parser.py',328),
+  ('condition -> expression GE expression','condition',3,'p_condition','parser.py',329),
+  ('condition -> expression EQ expression','condition',3,'p_condition','parser.py',330),
+  ('condition -> expression NE expression','condition',3,'p_condition','parser.py',331),
+  ('empty -> <empty>','empty',0,'p_empty','parser.py',336),
+  ('factor -> ID LPAREN argument_list_opt RPAREN','factor',4,'p_factor_function_call','parser.py',351),
+  ('argument_list_opt -> argument_list','argument_list_opt',1,'p_argument_list_opt','parser.py',366),
+  ('argument_list_opt -> empty','argument_list_opt',1,'p_argument_list_opt','parser.py',367),
+  ('argument_list -> argument','argument_list',1,'p_argument_list','parser.py',372),
+  ('argument_list -> argument_list COMMA argument','argument_list',3,'p_argument_list','parser.py',373),
+  ('argument -> expression','argument',1,'p_argument','parser.py',381),
 ]

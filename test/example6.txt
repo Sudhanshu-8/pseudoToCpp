@@ -1,0 +1,9 @@
+\Fn ExampleSix() {
+    a \gets 7;
+    b \gets 3;
+    maxVal \gets a;
+    \If (b > maxVal) {
+        maxVal \gets b;
+    }
+    \KwRet maxVal;
+}

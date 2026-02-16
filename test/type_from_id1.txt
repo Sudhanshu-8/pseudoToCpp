@@ -1,0 +1,5 @@
+// difficulty: medium-type, assignment from undeclared ID
+\Fn TypeFromIdOne() {
+    result \gets temp;
+    \KwRet result;
+}

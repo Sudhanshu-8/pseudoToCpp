@@ -1,0 +1,7 @@
+
+\Fn ExampleOne() {
+    a \gets 3;
+    b \gets 5;
+    c \gets a + b;
+    \KwRet c;
+}

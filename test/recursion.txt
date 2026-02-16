@@ -1,0 +1,6 @@
+\Fn factorial(n){
+    \If (n==1){
+        \KwRet 1;
+    }
+    \KwRet n*factorial(n-1);
+}

@@ -1,0 +1,8 @@
+\Fn ExampleFour() {
+    i \gets 0;
+    sum \gets 0;
+    \For (i \gets 0; i < 10; i \gets i + 1) {
+        sum \gets sum + i;
+    }
+    \KwRet sum;
+}

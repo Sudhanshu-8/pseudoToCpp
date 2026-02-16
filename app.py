@@ -1,30 +1,53 @@
-# app.py
-import sys
-from parser import parser
+<<<<<<< HEAD
+from parser import parser, to_cpp, register_type_provider, valid_dtypes, MissingTypeError
 
-def main():
-    if len(sys.argv) < 2:
-        print("Usage: python app.py <inputfile>")
-        sys.exit(1)
 
-    input_file = sys.argv[1]
+def cli_type_provider(var, allowed):
+    # Fallback interactive provider for the CLI tool only.
+    choices = ", ".join(allowed)
+    dtype = input(f"Enter datatype for variable '{var}' ({choices}): ").strip()
+    while dtype not in allowed:
+        dtype = input(f"Invalid datatype. Enter again for '{var}' ({choices}): ").strip()
+    return dtype
 
-    with open(input_file, "r", encoding="utf-8") as f:
+
+ndef main():
+    register_type_provider(cli_type_provider)
+
+    with open("input.txt") as f:
         data = f.read()
 
-    result = parser.parse(data)
+    print("🔹 Starting parsing... You’ll be asked for variable datatypes where needed.\n")
 
-    if not result:
-        print("❌ Parsing failed. Check syntax in input file.")
-        sys.exit(1)
+    try:
+        result = parse_code(data)
+    except MissingTypeError as e:
+        raise SystemExit(f"Missing type for variable: {e}")
 
-    output_file = input_file.replace(".txt", "_converted.cpp")
+    cpp_code = to_cpp(result)
+    print("\n✅ Generated C++ code:\n")
+    print(cpp_code)
 
-    with open(output_file, "w", encoding="utf-8") as f:
-        f.write(result)
+    with open("output.cpp", "w") as f:
+        f.write(cpp_code)
 
-    print(f"\n✅ Generated C++ code saved to: {output_file}\n")
-    print(result)
 
 if __name__ == "__main__":
     main()
+=======
+from parser import parser, to_cpp
+
+with open("input.txt") as f:
+    data = f.read()
+
+print("🔹 Starting parsing... You’ll be asked for variable datatypes where needed.\n")
+
+result = parser.parse(data)
+
+cpp_code = to_cpp(result)
+print("\n✅ Generated C++ code:\n")
+print(cpp_code)
+
+with open("output.cpp", "w") as f:
+    f.write(cpp_code)
+>>>>>>> 5b0bb2920e139ef8d09a02537253009599a6ea29

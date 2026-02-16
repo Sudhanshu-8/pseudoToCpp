@@ -2,49 +2,133 @@ Created by PLY version 3.11 (http://www.dabeaz.com/ply)
 
 Unused terminals:
 
-    COMMA
+    AND
+    BOOL
+    BREAK
+    CHAR
+    CONTINUE
+    ELSE
+    NOT
+    OR
+    PRINT
+    SCAN
+    STRING
 
 Grammar
 
 Rule 0     S' -> program
 Rule 1     program -> function
-Rule 2     function -> FN LPAREN IDENT RPAREN LBRACE statements RBRACE
-Rule 3     statements -> statements statement
-Rule 4     statements -> statement
-Rule 5     statement -> IDENT ASSIGN IDENT SEMICOLON
-Rule 6     statement -> IDENT ASSIGN NUMBER SEMICOLON
-Rule 7     statement -> WHILE LPAREN condition RPAREN LBRACE statements RBRACE
-Rule 8     statement -> IF LPAREN condition RPAREN LBRACE statements RBRACE
-Rule 9     statement -> BREAK SEMICOLON
-Rule 10    statement -> RETURN IDENT SEMICOLON
-Rule 11    condition -> IDENT OP IDENT
+Rule 2     function -> FN ID LPAREN param_list_opt RPAREN LBRACE stmt_list RBRACE
+Rule 3     param_list_opt -> param_list
+Rule 4     param_list_opt -> empty
+Rule 5     param_list -> ID
+Rule 6     param_list -> param_list COMMA ID
+Rule 7     stmt_list -> stmt_list statement
+Rule 8     stmt_list -> statement
+Rule 9     stmt_list -> empty
+Rule 10    statement -> ID ASSIGN NUMBER SEMICOLON
+Rule 11    statement -> ID ASSIGN ID SEMICOLON
+Rule 12    statement -> ID ASSIGN expression SEMICOLON
+Rule 13    statement -> IF LPAREN condition RPAREN LBRACE stmt_list RBRACE
+Rule 14    statement -> WHILE LPAREN condition RPAREN LBRACE stmt_list RBRACE
+Rule 15    statement -> FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE
+Rule 16    for_init_opt -> ID ASSIGN NUMBER
+Rule 17    for_init_opt -> ID ASSIGN ID
+Rule 18    for_init_opt -> ID ASSIGN expression
+Rule 19    for_init_opt -> empty
+Rule 20    condition_opt -> condition
+Rule 21    condition_opt -> empty
+Rule 22    for_update_opt -> ID ASSIGN NUMBER
+Rule 23    for_update_opt -> ID ASSIGN ID
+Rule 24    for_update_opt -> ID ASSIGN expression
+Rule 25    for_update_opt -> empty
+Rule 26    statement -> RETURN expression SEMICOLON
+Rule 27    statement -> RETURN NUMBER SEMICOLON
+Rule 28    statement -> RETURN ID SEMICOLON
+Rule 29    statement -> ID LPAREN argument_list_opt RPAREN SEMICOLON
+Rule 30    expression -> expression PLUS term
+Rule 31    expression -> expression MINUS term
+Rule 32    expression -> term
+Rule 33    term -> term TIMES factor
+Rule 34    term -> term DIVIDE factor
+Rule 35    term -> term MOD factor
+Rule 36    term -> factor
+Rule 37    factor -> NUMBER
+Rule 38    factor -> ID
+Rule 39    factor -> LPAREN expression RPAREN
+Rule 40    condition -> expression LT expression
+Rule 41    condition -> expression GT expression
+Rule 42    condition -> expression LE expression
+Rule 43    condition -> expression GE expression
+Rule 44    condition -> expression EQ expression
+Rule 45    condition -> expression NE expression
+Rule 46    empty -> <empty>
+Rule 47    factor -> ID LPAREN argument_list_opt RPAREN
+Rule 48    argument_list_opt -> argument_list
+Rule 49    argument_list_opt -> empty
+Rule 50    argument_list -> argument
+Rule 51    argument_list -> argument_list COMMA argument
+Rule 52    argument -> expression
 
 Terminals, with rules where they appear
 
-ASSIGN               : 5 6
-BREAK                : 9
-COMMA                : 
+AND                  : 
+ASSIGN               : 10 11 12 16 17 18 22 23 24
+BOOL                 : 
+BREAK                : 
+CHAR                 : 
+COMMA                : 6 51
+CONTINUE             : 
+DIVIDE               : 34
+ELSE                 : 
+EQ                   : 44
 FN                   : 2
-IDENT                : 2 5 5 6 10 11 11
-IF                   : 8
-LBRACE               : 2 7 8
-LPAREN               : 2 7 8
-NUMBER               : 6
-OP                   : 11
-RBRACE               : 2 7 8
-RETURN               : 10
-RPAREN               : 2 7 8
-SEMICOLON            : 5 6 9 10
-WHILE                : 7
+FOR                  : 15
+GE                   : 43
+GT                   : 41
+ID                   : 2 5 6 10 11 11 12 16 17 17 18 22 23 23 24 28 29 38 47
+IF                   : 13
+LBRACE               : 2 13 14 15
+LE                   : 42
+LPAREN               : 2 13 14 15 29 39 47
+LT                   : 40
+MINUS                : 31
+MOD                  : 35
+NE                   : 45
+NOT                  : 
+NUMBER               : 10 16 22 27 37
+OR                   : 
+PLUS                 : 30
+PRINT                : 
+RBRACE               : 2 13 14 15
+RETURN               : 26 27 28
+RPAREN               : 2 13 14 15 29 39 47
+SCAN                 : 
+SEMICOLON            : 10 11 12 15 15 26 27 28 29
+STRING               : 
+TIMES                : 33
+WHILE                : 14
 error                : 
 
 Nonterminals, with rules where they appear
 
-condition            : 7 8
+argument             : 50 51
+argument_list        : 48 51
+argument_list_opt    : 29 47
+condition            : 13 14 20
+condition_opt        : 15
+empty                : 4 9 19 21 25 49
+expression           : 12 18 24 26 30 31 39 40 40 41 41 42 42 43 43 44 44 45 45 52
+factor               : 33 34 35 36
+for_init_opt         : 15
+for_update_opt       : 15
 function             : 1
+param_list           : 3 6
+param_list_opt       : 2
 program              : 0
-statement            : 3 4
-statements           : 2 3 7 8
+statement            : 7 8
+stmt_list            : 2 7 13 14 15
+term                 : 30 31 32 33 34 35
 
 Parsing method: LALR
 
@@ -52,7 +136,7 @@ state 0
 
     (0) S' -> . program
     (1) program -> . function
-    (2) function -> . FN LPAREN IDENT RPAREN LBRACE statements RBRACE
+    (2) function -> . FN ID LPAREN param_list_opt RPAREN LBRACE stmt_list RBRACE
 
     FN              shift and go to state 3
 
@@ -74,387 +158,1811 @@ state 2
 
 state 3
 
-    (2) function -> FN . LPAREN IDENT RPAREN LBRACE statements RBRACE
+    (2) function -> FN . ID LPAREN param_list_opt RPAREN LBRACE stmt_list RBRACE
 
-    LPAREN          shift and go to state 4
+    ID              shift and go to state 4
 
 
 state 4
 
-    (2) function -> FN LPAREN . IDENT RPAREN LBRACE statements RBRACE
+    (2) function -> FN ID . LPAREN param_list_opt RPAREN LBRACE stmt_list RBRACE
 
-    IDENT           shift and go to state 5
+    LPAREN          shift and go to state 5
 
 
 state 5
 
-    (2) function -> FN LPAREN IDENT . RPAREN LBRACE statements RBRACE
+    (2) function -> FN ID LPAREN . param_list_opt RPAREN LBRACE stmt_list RBRACE
+    (3) param_list_opt -> . param_list
+    (4) param_list_opt -> . empty
+    (5) param_list -> . ID
+    (6) param_list -> . param_list COMMA ID
+    (46) empty -> .
 
-    RPAREN          shift and go to state 6
+    ID              shift and go to state 6
+    RPAREN          reduce using rule 46 (empty -> .)
 
+    param_list_opt                 shift and go to state 7
+    param_list                     shift and go to state 8
+    empty                          shift and go to state 9
 
 state 6
 
-    (2) function -> FN LPAREN IDENT RPAREN . LBRACE statements RBRACE
+    (5) param_list -> ID .
 
-    LBRACE          shift and go to state 7
+    COMMA           reduce using rule 5 (param_list -> ID .)
+    RPAREN          reduce using rule 5 (param_list -> ID .)
 
 
 state 7
 
-    (2) function -> FN LPAREN IDENT RPAREN LBRACE . statements RBRACE
-    (3) statements -> . statements statement
-    (4) statements -> . statement
-    (5) statement -> . IDENT ASSIGN IDENT SEMICOLON
-    (6) statement -> . IDENT ASSIGN NUMBER SEMICOLON
-    (7) statement -> . WHILE LPAREN condition RPAREN LBRACE statements RBRACE
-    (8) statement -> . IF LPAREN condition RPAREN LBRACE statements RBRACE
-    (9) statement -> . BREAK SEMICOLON
-    (10) statement -> . RETURN IDENT SEMICOLON
+    (2) function -> FN ID LPAREN param_list_opt . RPAREN LBRACE stmt_list RBRACE
 
-    IDENT           shift and go to state 8
-    WHILE           shift and go to state 11
-    IF              shift and go to state 12
-    BREAK           shift and go to state 13
-    RETURN          shift and go to state 14
+    RPAREN          shift and go to state 10
 
-    statements                     shift and go to state 9
-    statement                      shift and go to state 10
 
 state 8
 
-    (5) statement -> IDENT . ASSIGN IDENT SEMICOLON
-    (6) statement -> IDENT . ASSIGN NUMBER SEMICOLON
+    (3) param_list_opt -> param_list .
+    (6) param_list -> param_list . COMMA ID
 
-    ASSIGN          shift and go to state 15
+    RPAREN          reduce using rule 3 (param_list_opt -> param_list .)
+    COMMA           shift and go to state 11
 
 
 state 9
 
-    (2) function -> FN LPAREN IDENT RPAREN LBRACE statements . RBRACE
-    (3) statements -> statements . statement
-    (5) statement -> . IDENT ASSIGN IDENT SEMICOLON
-    (6) statement -> . IDENT ASSIGN NUMBER SEMICOLON
-    (7) statement -> . WHILE LPAREN condition RPAREN LBRACE statements RBRACE
-    (8) statement -> . IF LPAREN condition RPAREN LBRACE statements RBRACE
-    (9) statement -> . BREAK SEMICOLON
-    (10) statement -> . RETURN IDENT SEMICOLON
+    (4) param_list_opt -> empty .
 
-    RBRACE          shift and go to state 16
-    IDENT           shift and go to state 8
-    WHILE           shift and go to state 11
-    IF              shift and go to state 12
-    BREAK           shift and go to state 13
-    RETURN          shift and go to state 14
+    RPAREN          reduce using rule 4 (param_list_opt -> empty .)
 
-    statement                      shift and go to state 17
 
 state 10
 
-    (4) statements -> statement .
+    (2) function -> FN ID LPAREN param_list_opt RPAREN . LBRACE stmt_list RBRACE
 
-    RBRACE          reduce using rule 4 (statements -> statement .)
-    IDENT           reduce using rule 4 (statements -> statement .)
-    WHILE           reduce using rule 4 (statements -> statement .)
-    IF              reduce using rule 4 (statements -> statement .)
-    BREAK           reduce using rule 4 (statements -> statement .)
-    RETURN          reduce using rule 4 (statements -> statement .)
+    LBRACE          shift and go to state 12
 
 
 state 11
 
-    (7) statement -> WHILE . LPAREN condition RPAREN LBRACE statements RBRACE
+    (6) param_list -> param_list COMMA . ID
 
-    LPAREN          shift and go to state 18
+    ID              shift and go to state 13
 
 
 state 12
 
-    (8) statement -> IF . LPAREN condition RPAREN LBRACE statements RBRACE
+    (2) function -> FN ID LPAREN param_list_opt RPAREN LBRACE . stmt_list RBRACE
+    (7) stmt_list -> . stmt_list statement
+    (8) stmt_list -> . statement
+    (9) stmt_list -> . empty
+    (10) statement -> . ID ASSIGN NUMBER SEMICOLON
+    (11) statement -> . ID ASSIGN ID SEMICOLON
+    (12) statement -> . ID ASSIGN expression SEMICOLON
+    (13) statement -> . IF LPAREN condition RPAREN LBRACE stmt_list RBRACE
+    (14) statement -> . WHILE LPAREN condition RPAREN LBRACE stmt_list RBRACE
+    (15) statement -> . FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE
+    (26) statement -> . RETURN expression SEMICOLON
+    (27) statement -> . RETURN NUMBER SEMICOLON
+    (28) statement -> . RETURN ID SEMICOLON
+    (29) statement -> . ID LPAREN argument_list_opt RPAREN SEMICOLON
+    (46) empty -> .
 
-    LPAREN          shift and go to state 19
+  ! shift/reduce conflict for ID resolved as shift
+  ! shift/reduce conflict for IF resolved as shift
+  ! shift/reduce conflict for WHILE resolved as shift
+  ! shift/reduce conflict for FOR resolved as shift
+  ! shift/reduce conflict for RETURN resolved as shift
+    ID              shift and go to state 14
+    IF              shift and go to state 18
+    WHILE           shift and go to state 19
+    FOR             shift and go to state 20
+    RETURN          shift and go to state 21
+    RBRACE          reduce using rule 46 (empty -> .)
 
+  ! ID              [ reduce using rule 46 (empty -> .) ]
+  ! IF              [ reduce using rule 46 (empty -> .) ]
+  ! WHILE           [ reduce using rule 46 (empty -> .) ]
+  ! FOR             [ reduce using rule 46 (empty -> .) ]
+  ! RETURN          [ reduce using rule 46 (empty -> .) ]
+
+    stmt_list                      shift and go to state 15
+    statement                      shift and go to state 16
+    empty                          shift and go to state 17
 
 state 13
 
-    (9) statement -> BREAK . SEMICOLON
+    (6) param_list -> param_list COMMA ID .
 
-    SEMICOLON       shift and go to state 20
+    COMMA           reduce using rule 6 (param_list -> param_list COMMA ID .)
+    RPAREN          reduce using rule 6 (param_list -> param_list COMMA ID .)
 
 
 state 14
 
-    (10) statement -> RETURN . IDENT SEMICOLON
+    (10) statement -> ID . ASSIGN NUMBER SEMICOLON
+    (11) statement -> ID . ASSIGN ID SEMICOLON
+    (12) statement -> ID . ASSIGN expression SEMICOLON
+    (29) statement -> ID . LPAREN argument_list_opt RPAREN SEMICOLON
 
-    IDENT           shift and go to state 21
+    ASSIGN          shift and go to state 22
+    LPAREN          shift and go to state 23
 
 
 state 15
 
-    (5) statement -> IDENT ASSIGN . IDENT SEMICOLON
-    (6) statement -> IDENT ASSIGN . NUMBER SEMICOLON
+    (2) function -> FN ID LPAREN param_list_opt RPAREN LBRACE stmt_list . RBRACE
+    (7) stmt_list -> stmt_list . statement
+    (10) statement -> . ID ASSIGN NUMBER SEMICOLON
+    (11) statement -> . ID ASSIGN ID SEMICOLON
+    (12) statement -> . ID ASSIGN expression SEMICOLON
+    (13) statement -> . IF LPAREN condition RPAREN LBRACE stmt_list RBRACE
+    (14) statement -> . WHILE LPAREN condition RPAREN LBRACE stmt_list RBRACE
+    (15) statement -> . FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE
+    (26) statement -> . RETURN expression SEMICOLON
+    (27) statement -> . RETURN NUMBER SEMICOLON
+    (28) statement -> . RETURN ID SEMICOLON
+    (29) statement -> . ID LPAREN argument_list_opt RPAREN SEMICOLON
 
-    IDENT           shift and go to state 22
-    NUMBER          shift and go to state 23
+    RBRACE          shift and go to state 24
+    ID              shift and go to state 14
+    IF              shift and go to state 18
+    WHILE           shift and go to state 19
+    FOR             shift and go to state 20
+    RETURN          shift and go to state 21
 
+    statement                      shift and go to state 25
 
 state 16
 
-    (2) function -> FN LPAREN IDENT RPAREN LBRACE statements RBRACE .
+    (8) stmt_list -> statement .
 
-    $end            reduce using rule 2 (function -> FN LPAREN IDENT RPAREN LBRACE statements RBRACE .)
+    RBRACE          reduce using rule 8 (stmt_list -> statement .)
+    ID              reduce using rule 8 (stmt_list -> statement .)
+    IF              reduce using rule 8 (stmt_list -> statement .)
+    WHILE           reduce using rule 8 (stmt_list -> statement .)
+    FOR             reduce using rule 8 (stmt_list -> statement .)
+    RETURN          reduce using rule 8 (stmt_list -> statement .)
 
 
 state 17
 
-    (3) statements -> statements statement .
+    (9) stmt_list -> empty .
 
-    RBRACE          reduce using rule 3 (statements -> statements statement .)
-    IDENT           reduce using rule 3 (statements -> statements statement .)
-    WHILE           reduce using rule 3 (statements -> statements statement .)
-    IF              reduce using rule 3 (statements -> statements statement .)
-    BREAK           reduce using rule 3 (statements -> statements statement .)
-    RETURN          reduce using rule 3 (statements -> statements statement .)
+    RBRACE          reduce using rule 9 (stmt_list -> empty .)
+    ID              reduce using rule 9 (stmt_list -> empty .)
+    IF              reduce using rule 9 (stmt_list -> empty .)
+    WHILE           reduce using rule 9 (stmt_list -> empty .)
+    FOR             reduce using rule 9 (stmt_list -> empty .)
+    RETURN          reduce using rule 9 (stmt_list -> empty .)
 
 
 state 18
 
-    (7) statement -> WHILE LPAREN . condition RPAREN LBRACE statements RBRACE
-    (11) condition -> . IDENT OP IDENT
+    (13) statement -> IF . LPAREN condition RPAREN LBRACE stmt_list RBRACE
 
-    IDENT           shift and go to state 25
+    LPAREN          shift and go to state 26
 
-    condition                      shift and go to state 24
 
 state 19
 
-    (8) statement -> IF LPAREN . condition RPAREN LBRACE statements RBRACE
-    (11) condition -> . IDENT OP IDENT
+    (14) statement -> WHILE . LPAREN condition RPAREN LBRACE stmt_list RBRACE
 
-    IDENT           shift and go to state 25
+    LPAREN          shift and go to state 27
 
-    condition                      shift and go to state 26
 
 state 20
 
-    (9) statement -> BREAK SEMICOLON .
+    (15) statement -> FOR . LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE
 
-    RBRACE          reduce using rule 9 (statement -> BREAK SEMICOLON .)
-    IDENT           reduce using rule 9 (statement -> BREAK SEMICOLON .)
-    WHILE           reduce using rule 9 (statement -> BREAK SEMICOLON .)
-    IF              reduce using rule 9 (statement -> BREAK SEMICOLON .)
-    BREAK           reduce using rule 9 (statement -> BREAK SEMICOLON .)
-    RETURN          reduce using rule 9 (statement -> BREAK SEMICOLON .)
+    LPAREN          shift and go to state 28
 
 
 state 21
 
-    (10) statement -> RETURN IDENT . SEMICOLON
+    (26) statement -> RETURN . expression SEMICOLON
+    (27) statement -> RETURN . NUMBER SEMICOLON
+    (28) statement -> RETURN . ID SEMICOLON
+    (30) expression -> . expression PLUS term
+    (31) expression -> . expression MINUS term
+    (32) expression -> . term
+    (33) term -> . term TIMES factor
+    (34) term -> . term DIVIDE factor
+    (35) term -> . term MOD factor
+    (36) term -> . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
 
-    SEMICOLON       shift and go to state 27
+    NUMBER          shift and go to state 30
+    ID              shift and go to state 31
+    LPAREN          shift and go to state 34
 
+    expression                     shift and go to state 29
+    term                           shift and go to state 32
+    factor                         shift and go to state 33
 
 state 22
 
-    (5) statement -> IDENT ASSIGN IDENT . SEMICOLON
+    (10) statement -> ID ASSIGN . NUMBER SEMICOLON
+    (11) statement -> ID ASSIGN . ID SEMICOLON
+    (12) statement -> ID ASSIGN . expression SEMICOLON
+    (30) expression -> . expression PLUS term
+    (31) expression -> . expression MINUS term
+    (32) expression -> . term
+    (33) term -> . term TIMES factor
+    (34) term -> . term DIVIDE factor
+    (35) term -> . term MOD factor
+    (36) term -> . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
 
-    SEMICOLON       shift and go to state 28
+    NUMBER          shift and go to state 36
+    ID              shift and go to state 35
+    LPAREN          shift and go to state 34
 
+    expression                     shift and go to state 37
+    term                           shift and go to state 32
+    factor                         shift and go to state 33
 
 state 23
 
-    (6) statement -> IDENT ASSIGN NUMBER . SEMICOLON
+    (29) statement -> ID LPAREN . argument_list_opt RPAREN SEMICOLON
+    (48) argument_list_opt -> . argument_list
+    (49) argument_list_opt -> . empty
+    (50) argument_list -> . argument
+    (51) argument_list -> . argument_list COMMA argument
+    (46) empty -> .
+    (52) argument -> . expression
+    (30) expression -> . expression PLUS term
+    (31) expression -> . expression MINUS term
+    (32) expression -> . term
+    (33) term -> . term TIMES factor
+    (34) term -> . term DIVIDE factor
+    (35) term -> . term MOD factor
+    (36) term -> . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
 
-    SEMICOLON       shift and go to state 29
+    RPAREN          reduce using rule 46 (empty -> .)
+    NUMBER          shift and go to state 44
+    ID              shift and go to state 38
+    LPAREN          shift and go to state 34
 
+    argument_list_opt              shift and go to state 39
+    argument_list                  shift and go to state 40
+    empty                          shift and go to state 41
+    argument                       shift and go to state 42
+    expression                     shift and go to state 43
+    term                           shift and go to state 32
+    factor                         shift and go to state 33
 
 state 24
 
-    (7) statement -> WHILE LPAREN condition . RPAREN LBRACE statements RBRACE
+    (2) function -> FN ID LPAREN param_list_opt RPAREN LBRACE stmt_list RBRACE .
 
-    RPAREN          shift and go to state 30
+    $end            reduce using rule 2 (function -> FN ID LPAREN param_list_opt RPAREN LBRACE stmt_list RBRACE .)
 
 
 state 25
 
-    (11) condition -> IDENT . OP IDENT
+    (7) stmt_list -> stmt_list statement .
 
-    OP              shift and go to state 31
+    RBRACE          reduce using rule 7 (stmt_list -> stmt_list statement .)
+    ID              reduce using rule 7 (stmt_list -> stmt_list statement .)
+    IF              reduce using rule 7 (stmt_list -> stmt_list statement .)
+    WHILE           reduce using rule 7 (stmt_list -> stmt_list statement .)
+    FOR             reduce using rule 7 (stmt_list -> stmt_list statement .)
+    RETURN          reduce using rule 7 (stmt_list -> stmt_list statement .)
 
 
 state 26
 
-    (8) statement -> IF LPAREN condition . RPAREN LBRACE statements RBRACE
+    (13) statement -> IF LPAREN . condition RPAREN LBRACE stmt_list RBRACE
+    (40) condition -> . expression LT expression
+    (41) condition -> . expression GT expression
+    (42) condition -> . expression LE expression
+    (43) condition -> . expression GE expression
+    (44) condition -> . expression EQ expression
+    (45) condition -> . expression NE expression
+    (30) expression -> . expression PLUS term
+    (31) expression -> . expression MINUS term
+    (32) expression -> . term
+    (33) term -> . term TIMES factor
+    (34) term -> . term DIVIDE factor
+    (35) term -> . term MOD factor
+    (36) term -> . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
 
-    RPAREN          shift and go to state 32
+    NUMBER          shift and go to state 44
+    ID              shift and go to state 38
+    LPAREN          shift and go to state 34
 
+    condition                      shift and go to state 45
+    expression                     shift and go to state 46
+    term                           shift and go to state 32
+    factor                         shift and go to state 33
 
 state 27
 
-    (10) statement -> RETURN IDENT SEMICOLON .
+    (14) statement -> WHILE LPAREN . condition RPAREN LBRACE stmt_list RBRACE
+    (40) condition -> . expression LT expression
+    (41) condition -> . expression GT expression
+    (42) condition -> . expression LE expression
+    (43) condition -> . expression GE expression
+    (44) condition -> . expression EQ expression
+    (45) condition -> . expression NE expression
+    (30) expression -> . expression PLUS term
+    (31) expression -> . expression MINUS term
+    (32) expression -> . term
+    (33) term -> . term TIMES factor
+    (34) term -> . term DIVIDE factor
+    (35) term -> . term MOD factor
+    (36) term -> . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
 
-    RBRACE          reduce using rule 10 (statement -> RETURN IDENT SEMICOLON .)
-    IDENT           reduce using rule 10 (statement -> RETURN IDENT SEMICOLON .)
-    WHILE           reduce using rule 10 (statement -> RETURN IDENT SEMICOLON .)
-    IF              reduce using rule 10 (statement -> RETURN IDENT SEMICOLON .)
-    BREAK           reduce using rule 10 (statement -> RETURN IDENT SEMICOLON .)
-    RETURN          reduce using rule 10 (statement -> RETURN IDENT SEMICOLON .)
+    NUMBER          shift and go to state 44
+    ID              shift and go to state 38
+    LPAREN          shift and go to state 34
 
+    condition                      shift and go to state 47
+    expression                     shift and go to state 46
+    term                           shift and go to state 32
+    factor                         shift and go to state 33
 
 state 28
 
-    (5) statement -> IDENT ASSIGN IDENT SEMICOLON .
+    (15) statement -> FOR LPAREN . for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE
+    (16) for_init_opt -> . ID ASSIGN NUMBER
+    (17) for_init_opt -> . ID ASSIGN ID
+    (18) for_init_opt -> . ID ASSIGN expression
+    (19) for_init_opt -> . empty
+    (46) empty -> .
 
-    RBRACE          reduce using rule 5 (statement -> IDENT ASSIGN IDENT SEMICOLON .)
-    IDENT           reduce using rule 5 (statement -> IDENT ASSIGN IDENT SEMICOLON .)
-    WHILE           reduce using rule 5 (statement -> IDENT ASSIGN IDENT SEMICOLON .)
-    IF              reduce using rule 5 (statement -> IDENT ASSIGN IDENT SEMICOLON .)
-    BREAK           reduce using rule 5 (statement -> IDENT ASSIGN IDENT SEMICOLON .)
-    RETURN          reduce using rule 5 (statement -> IDENT ASSIGN IDENT SEMICOLON .)
+    ID              shift and go to state 49
+    SEMICOLON       reduce using rule 46 (empty -> .)
 
+    for_init_opt                   shift and go to state 48
+    empty                          shift and go to state 50
 
 state 29
 
-    (6) statement -> IDENT ASSIGN NUMBER SEMICOLON .
+    (26) statement -> RETURN expression . SEMICOLON
+    (30) expression -> expression . PLUS term
+    (31) expression -> expression . MINUS term
 
-    RBRACE          reduce using rule 6 (statement -> IDENT ASSIGN NUMBER SEMICOLON .)
-    IDENT           reduce using rule 6 (statement -> IDENT ASSIGN NUMBER SEMICOLON .)
-    WHILE           reduce using rule 6 (statement -> IDENT ASSIGN NUMBER SEMICOLON .)
-    IF              reduce using rule 6 (statement -> IDENT ASSIGN NUMBER SEMICOLON .)
-    BREAK           reduce using rule 6 (statement -> IDENT ASSIGN NUMBER SEMICOLON .)
-    RETURN          reduce using rule 6 (statement -> IDENT ASSIGN NUMBER SEMICOLON .)
+    SEMICOLON       shift and go to state 51
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
 
 
 state 30
 
-    (7) statement -> WHILE LPAREN condition RPAREN . LBRACE statements RBRACE
+    (27) statement -> RETURN NUMBER . SEMICOLON
+    (37) factor -> NUMBER .
 
-    LBRACE          shift and go to state 33
+  ! shift/reduce conflict for SEMICOLON resolved as shift
+    SEMICOLON       shift and go to state 54
+    TIMES           reduce using rule 37 (factor -> NUMBER .)
+    DIVIDE          reduce using rule 37 (factor -> NUMBER .)
+    MOD             reduce using rule 37 (factor -> NUMBER .)
+    PLUS            reduce using rule 37 (factor -> NUMBER .)
+    MINUS           reduce using rule 37 (factor -> NUMBER .)
+
+  ! SEMICOLON       [ reduce using rule 37 (factor -> NUMBER .) ]
 
 
 state 31
 
-    (11) condition -> IDENT OP . IDENT
+    (28) statement -> RETURN ID . SEMICOLON
+    (38) factor -> ID .
+    (47) factor -> ID . LPAREN argument_list_opt RPAREN
 
-    IDENT           shift and go to state 34
+  ! shift/reduce conflict for SEMICOLON resolved as shift
+    SEMICOLON       shift and go to state 55
+    TIMES           reduce using rule 38 (factor -> ID .)
+    DIVIDE          reduce using rule 38 (factor -> ID .)
+    MOD             reduce using rule 38 (factor -> ID .)
+    PLUS            reduce using rule 38 (factor -> ID .)
+    MINUS           reduce using rule 38 (factor -> ID .)
+    LPAREN          shift and go to state 56
+
+  ! SEMICOLON       [ reduce using rule 38 (factor -> ID .) ]
 
 
 state 32
 
-    (8) statement -> IF LPAREN condition RPAREN . LBRACE statements RBRACE
+    (32) expression -> term .
+    (33) term -> term . TIMES factor
+    (34) term -> term . DIVIDE factor
+    (35) term -> term . MOD factor
 
-    LBRACE          shift and go to state 35
+    SEMICOLON       reduce using rule 32 (expression -> term .)
+    PLUS            reduce using rule 32 (expression -> term .)
+    MINUS           reduce using rule 32 (expression -> term .)
+    COMMA           reduce using rule 32 (expression -> term .)
+    RPAREN          reduce using rule 32 (expression -> term .)
+    LT              reduce using rule 32 (expression -> term .)
+    GT              reduce using rule 32 (expression -> term .)
+    LE              reduce using rule 32 (expression -> term .)
+    GE              reduce using rule 32 (expression -> term .)
+    EQ              reduce using rule 32 (expression -> term .)
+    NE              reduce using rule 32 (expression -> term .)
+    TIMES           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    MOD             shift and go to state 59
 
 
 state 33
 
-    (7) statement -> WHILE LPAREN condition RPAREN LBRACE . statements RBRACE
-    (3) statements -> . statements statement
-    (4) statements -> . statement
-    (5) statement -> . IDENT ASSIGN IDENT SEMICOLON
-    (6) statement -> . IDENT ASSIGN NUMBER SEMICOLON
-    (7) statement -> . WHILE LPAREN condition RPAREN LBRACE statements RBRACE
-    (8) statement -> . IF LPAREN condition RPAREN LBRACE statements RBRACE
-    (9) statement -> . BREAK SEMICOLON
-    (10) statement -> . RETURN IDENT SEMICOLON
+    (36) term -> factor .
 
-    IDENT           shift and go to state 8
-    WHILE           shift and go to state 11
-    IF              shift and go to state 12
-    BREAK           shift and go to state 13
-    RETURN          shift and go to state 14
+    TIMES           reduce using rule 36 (term -> factor .)
+    DIVIDE          reduce using rule 36 (term -> factor .)
+    MOD             reduce using rule 36 (term -> factor .)
+    SEMICOLON       reduce using rule 36 (term -> factor .)
+    PLUS            reduce using rule 36 (term -> factor .)
+    MINUS           reduce using rule 36 (term -> factor .)
+    COMMA           reduce using rule 36 (term -> factor .)
+    RPAREN          reduce using rule 36 (term -> factor .)
+    LT              reduce using rule 36 (term -> factor .)
+    GT              reduce using rule 36 (term -> factor .)
+    LE              reduce using rule 36 (term -> factor .)
+    GE              reduce using rule 36 (term -> factor .)
+    EQ              reduce using rule 36 (term -> factor .)
+    NE              reduce using rule 36 (term -> factor .)
 
-    statements                     shift and go to state 36
-    statement                      shift and go to state 10
 
 state 34
 
-    (11) condition -> IDENT OP IDENT .
+    (39) factor -> LPAREN . expression RPAREN
+    (30) expression -> . expression PLUS term
+    (31) expression -> . expression MINUS term
+    (32) expression -> . term
+    (33) term -> . term TIMES factor
+    (34) term -> . term DIVIDE factor
+    (35) term -> . term MOD factor
+    (36) term -> . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
 
-    RPAREN          reduce using rule 11 (condition -> IDENT OP IDENT .)
+    NUMBER          shift and go to state 44
+    ID              shift and go to state 38
+    LPAREN          shift and go to state 34
 
+    expression                     shift and go to state 60
+    term                           shift and go to state 32
+    factor                         shift and go to state 33
 
 state 35
 
-    (8) statement -> IF LPAREN condition RPAREN LBRACE . statements RBRACE
-    (3) statements -> . statements statement
-    (4) statements -> . statement
-    (5) statement -> . IDENT ASSIGN IDENT SEMICOLON
-    (6) statement -> . IDENT ASSIGN NUMBER SEMICOLON
-    (7) statement -> . WHILE LPAREN condition RPAREN LBRACE statements RBRACE
-    (8) statement -> . IF LPAREN condition RPAREN LBRACE statements RBRACE
-    (9) statement -> . BREAK SEMICOLON
-    (10) statement -> . RETURN IDENT SEMICOLON
+    (11) statement -> ID ASSIGN ID . SEMICOLON
+    (38) factor -> ID .
+    (47) factor -> ID . LPAREN argument_list_opt RPAREN
 
-    IDENT           shift and go to state 8
-    WHILE           shift and go to state 11
-    IF              shift and go to state 12
-    BREAK           shift and go to state 13
-    RETURN          shift and go to state 14
+  ! shift/reduce conflict for SEMICOLON resolved as shift
+    SEMICOLON       shift and go to state 61
+    TIMES           reduce using rule 38 (factor -> ID .)
+    DIVIDE          reduce using rule 38 (factor -> ID .)
+    MOD             reduce using rule 38 (factor -> ID .)
+    PLUS            reduce using rule 38 (factor -> ID .)
+    MINUS           reduce using rule 38 (factor -> ID .)
+    LPAREN          shift and go to state 56
 
-    statements                     shift and go to state 37
-    statement                      shift and go to state 10
+  ! SEMICOLON       [ reduce using rule 38 (factor -> ID .) ]
+
 
 state 36
 
-    (7) statement -> WHILE LPAREN condition RPAREN LBRACE statements . RBRACE
-    (3) statements -> statements . statement
-    (5) statement -> . IDENT ASSIGN IDENT SEMICOLON
-    (6) statement -> . IDENT ASSIGN NUMBER SEMICOLON
-    (7) statement -> . WHILE LPAREN condition RPAREN LBRACE statements RBRACE
-    (8) statement -> . IF LPAREN condition RPAREN LBRACE statements RBRACE
-    (9) statement -> . BREAK SEMICOLON
-    (10) statement -> . RETURN IDENT SEMICOLON
+    (10) statement -> ID ASSIGN NUMBER . SEMICOLON
+    (37) factor -> NUMBER .
 
-    RBRACE          shift and go to state 38
-    IDENT           shift and go to state 8
-    WHILE           shift and go to state 11
-    IF              shift and go to state 12
-    BREAK           shift and go to state 13
-    RETURN          shift and go to state 14
+  ! shift/reduce conflict for SEMICOLON resolved as shift
+    SEMICOLON       shift and go to state 62
+    TIMES           reduce using rule 37 (factor -> NUMBER .)
+    DIVIDE          reduce using rule 37 (factor -> NUMBER .)
+    MOD             reduce using rule 37 (factor -> NUMBER .)
+    PLUS            reduce using rule 37 (factor -> NUMBER .)
+    MINUS           reduce using rule 37 (factor -> NUMBER .)
 
-    statement                      shift and go to state 17
+  ! SEMICOLON       [ reduce using rule 37 (factor -> NUMBER .) ]
+
 
 state 37
 
-    (8) statement -> IF LPAREN condition RPAREN LBRACE statements . RBRACE
-    (3) statements -> statements . statement
-    (5) statement -> . IDENT ASSIGN IDENT SEMICOLON
-    (6) statement -> . IDENT ASSIGN NUMBER SEMICOLON
-    (7) statement -> . WHILE LPAREN condition RPAREN LBRACE statements RBRACE
-    (8) statement -> . IF LPAREN condition RPAREN LBRACE statements RBRACE
-    (9) statement -> . BREAK SEMICOLON
-    (10) statement -> . RETURN IDENT SEMICOLON
+    (12) statement -> ID ASSIGN expression . SEMICOLON
+    (30) expression -> expression . PLUS term
+    (31) expression -> expression . MINUS term
 
-    RBRACE          shift and go to state 39
-    IDENT           shift and go to state 8
-    WHILE           shift and go to state 11
-    IF              shift and go to state 12
-    BREAK           shift and go to state 13
-    RETURN          shift and go to state 14
+    SEMICOLON       shift and go to state 63
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
 
-    statement                      shift and go to state 17
 
 state 38
 
-    (7) statement -> WHILE LPAREN condition RPAREN LBRACE statements RBRACE .
+    (38) factor -> ID .
+    (47) factor -> ID . LPAREN argument_list_opt RPAREN
 
-    RBRACE          reduce using rule 7 (statement -> WHILE LPAREN condition RPAREN LBRACE statements RBRACE .)
-    IDENT           reduce using rule 7 (statement -> WHILE LPAREN condition RPAREN LBRACE statements RBRACE .)
-    WHILE           reduce using rule 7 (statement -> WHILE LPAREN condition RPAREN LBRACE statements RBRACE .)
-    IF              reduce using rule 7 (statement -> WHILE LPAREN condition RPAREN LBRACE statements RBRACE .)
-    BREAK           reduce using rule 7 (statement -> WHILE LPAREN condition RPAREN LBRACE statements RBRACE .)
-    RETURN          reduce using rule 7 (statement -> WHILE LPAREN condition RPAREN LBRACE statements RBRACE .)
+    TIMES           reduce using rule 38 (factor -> ID .)
+    DIVIDE          reduce using rule 38 (factor -> ID .)
+    MOD             reduce using rule 38 (factor -> ID .)
+    PLUS            reduce using rule 38 (factor -> ID .)
+    MINUS           reduce using rule 38 (factor -> ID .)
+    COMMA           reduce using rule 38 (factor -> ID .)
+    RPAREN          reduce using rule 38 (factor -> ID .)
+    LT              reduce using rule 38 (factor -> ID .)
+    GT              reduce using rule 38 (factor -> ID .)
+    LE              reduce using rule 38 (factor -> ID .)
+    GE              reduce using rule 38 (factor -> ID .)
+    EQ              reduce using rule 38 (factor -> ID .)
+    NE              reduce using rule 38 (factor -> ID .)
+    SEMICOLON       reduce using rule 38 (factor -> ID .)
+    LPAREN          shift and go to state 56
 
 
 state 39
 
-    (8) statement -> IF LPAREN condition RPAREN LBRACE statements RBRACE .
+    (29) statement -> ID LPAREN argument_list_opt . RPAREN SEMICOLON
 
-    RBRACE          reduce using rule 8 (statement -> IF LPAREN condition RPAREN LBRACE statements RBRACE .)
-    IDENT           reduce using rule 8 (statement -> IF LPAREN condition RPAREN LBRACE statements RBRACE .)
-    WHILE           reduce using rule 8 (statement -> IF LPAREN condition RPAREN LBRACE statements RBRACE .)
-    IF              reduce using rule 8 (statement -> IF LPAREN condition RPAREN LBRACE statements RBRACE .)
-    BREAK           reduce using rule 8 (statement -> IF LPAREN condition RPAREN LBRACE statements RBRACE .)
-    RETURN          reduce using rule 8 (statement -> IF LPAREN condition RPAREN LBRACE statements RBRACE .)
+    RPAREN          shift and go to state 64
 
+
+state 40
+
+    (48) argument_list_opt -> argument_list .
+    (51) argument_list -> argument_list . COMMA argument
+
+    RPAREN          reduce using rule 48 (argument_list_opt -> argument_list .)
+    COMMA           shift and go to state 65
+
+
+state 41
+
+    (49) argument_list_opt -> empty .
+
+    RPAREN          reduce using rule 49 (argument_list_opt -> empty .)
+
+
+state 42
+
+    (50) argument_list -> argument .
+
+    COMMA           reduce using rule 50 (argument_list -> argument .)
+    RPAREN          reduce using rule 50 (argument_list -> argument .)
+
+
+state 43
+
+    (52) argument -> expression .
+    (30) expression -> expression . PLUS term
+    (31) expression -> expression . MINUS term
+
+    COMMA           reduce using rule 52 (argument -> expression .)
+    RPAREN          reduce using rule 52 (argument -> expression .)
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+
+
+state 44
+
+    (37) factor -> NUMBER .
+
+    TIMES           reduce using rule 37 (factor -> NUMBER .)
+    DIVIDE          reduce using rule 37 (factor -> NUMBER .)
+    MOD             reduce using rule 37 (factor -> NUMBER .)
+    PLUS            reduce using rule 37 (factor -> NUMBER .)
+    MINUS           reduce using rule 37 (factor -> NUMBER .)
+    COMMA           reduce using rule 37 (factor -> NUMBER .)
+    RPAREN          reduce using rule 37 (factor -> NUMBER .)
+    LT              reduce using rule 37 (factor -> NUMBER .)
+    GT              reduce using rule 37 (factor -> NUMBER .)
+    LE              reduce using rule 37 (factor -> NUMBER .)
+    GE              reduce using rule 37 (factor -> NUMBER .)
+    EQ              reduce using rule 37 (factor -> NUMBER .)
+    NE              reduce using rule 37 (factor -> NUMBER .)
+    SEMICOLON       reduce using rule 37 (factor -> NUMBER .)
+
+
+state 45
+
+    (13) statement -> IF LPAREN condition . RPAREN LBRACE stmt_list RBRACE
+
+    RPAREN          shift and go to state 66
+
+
+state 46
+
+    (40) condition -> expression . LT expression
+    (41) condition -> expression . GT expression
+    (42) condition -> expression . LE expression
+    (43) condition -> expression . GE expression
+    (44) condition -> expression . EQ expression
+    (45) condition -> expression . NE expression
+    (30) expression -> expression . PLUS term
+    (31) expression -> expression . MINUS term
+
+    LT              shift and go to state 67
+    GT              shift and go to state 68
+    LE              shift and go to state 69
+    GE              shift and go to state 70
+    EQ              shift and go to state 71
+    NE              shift and go to state 72
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+
+
+state 47
+
+    (14) statement -> WHILE LPAREN condition . RPAREN LBRACE stmt_list RBRACE
+
+    RPAREN          shift and go to state 73
+
+
+state 48
+
+    (15) statement -> FOR LPAREN for_init_opt . SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE
+
+    SEMICOLON       shift and go to state 74
+
+
+state 49
+
+    (16) for_init_opt -> ID . ASSIGN NUMBER
+    (17) for_init_opt -> ID . ASSIGN ID
+    (18) for_init_opt -> ID . ASSIGN expression
+
+    ASSIGN          shift and go to state 75
+
+
+state 50
+
+    (19) for_init_opt -> empty .
+
+    SEMICOLON       reduce using rule 19 (for_init_opt -> empty .)
+
+
+state 51
+
+    (26) statement -> RETURN expression SEMICOLON .
+
+    RBRACE          reduce using rule 26 (statement -> RETURN expression SEMICOLON .)
+    ID              reduce using rule 26 (statement -> RETURN expression SEMICOLON .)
+    IF              reduce using rule 26 (statement -> RETURN expression SEMICOLON .)
+    WHILE           reduce using rule 26 (statement -> RETURN expression SEMICOLON .)
+    FOR             reduce using rule 26 (statement -> RETURN expression SEMICOLON .)
+    RETURN          reduce using rule 26 (statement -> RETURN expression SEMICOLON .)
+
+
+state 52
+
+    (30) expression -> expression PLUS . term
+    (33) term -> . term TIMES factor
+    (34) term -> . term DIVIDE factor
+    (35) term -> . term MOD factor
+    (36) term -> . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
+
+    NUMBER          shift and go to state 44
+    ID              shift and go to state 38
+    LPAREN          shift and go to state 34
+
+    term                           shift and go to state 76
+    factor                         shift and go to state 33
+
+state 53
+
+    (31) expression -> expression MINUS . term
+    (33) term -> . term TIMES factor
+    (34) term -> . term DIVIDE factor
+    (35) term -> . term MOD factor
+    (36) term -> . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
+
+    NUMBER          shift and go to state 44
+    ID              shift and go to state 38
+    LPAREN          shift and go to state 34
+
+    term                           shift and go to state 77
+    factor                         shift and go to state 33
+
+state 54
+
+    (27) statement -> RETURN NUMBER SEMICOLON .
+
+    RBRACE          reduce using rule 27 (statement -> RETURN NUMBER SEMICOLON .)
+    ID              reduce using rule 27 (statement -> RETURN NUMBER SEMICOLON .)
+    IF              reduce using rule 27 (statement -> RETURN NUMBER SEMICOLON .)
+    WHILE           reduce using rule 27 (statement -> RETURN NUMBER SEMICOLON .)
+    FOR             reduce using rule 27 (statement -> RETURN NUMBER SEMICOLON .)
+    RETURN          reduce using rule 27 (statement -> RETURN NUMBER SEMICOLON .)
+
+
+state 55
+
+    (28) statement -> RETURN ID SEMICOLON .
+
+    RBRACE          reduce using rule 28 (statement -> RETURN ID SEMICOLON .)
+    ID              reduce using rule 28 (statement -> RETURN ID SEMICOLON .)
+    IF              reduce using rule 28 (statement -> RETURN ID SEMICOLON .)
+    WHILE           reduce using rule 28 (statement -> RETURN ID SEMICOLON .)
+    FOR             reduce using rule 28 (statement -> RETURN ID SEMICOLON .)
+    RETURN          reduce using rule 28 (statement -> RETURN ID SEMICOLON .)
+
+
+state 56
+
+    (47) factor -> ID LPAREN . argument_list_opt RPAREN
+    (48) argument_list_opt -> . argument_list
+    (49) argument_list_opt -> . empty
+    (50) argument_list -> . argument
+    (51) argument_list -> . argument_list COMMA argument
+    (46) empty -> .
+    (52) argument -> . expression
+    (30) expression -> . expression PLUS term
+    (31) expression -> . expression MINUS term
+    (32) expression -> . term
+    (33) term -> . term TIMES factor
+    (34) term -> . term DIVIDE factor
+    (35) term -> . term MOD factor
+    (36) term -> . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
+
+    RPAREN          reduce using rule 46 (empty -> .)
+    NUMBER          shift and go to state 44
+    ID              shift and go to state 38
+    LPAREN          shift and go to state 34
+
+    argument_list_opt              shift and go to state 78
+    argument_list                  shift and go to state 40
+    empty                          shift and go to state 41
+    argument                       shift and go to state 42
+    expression                     shift and go to state 43
+    term                           shift and go to state 32
+    factor                         shift and go to state 33
+
+state 57
+
+    (33) term -> term TIMES . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
+
+    NUMBER          shift and go to state 44
+    ID              shift and go to state 38
+    LPAREN          shift and go to state 34
+
+    factor                         shift and go to state 79
+
+state 58
+
+    (34) term -> term DIVIDE . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
+
+    NUMBER          shift and go to state 44
+    ID              shift and go to state 38
+    LPAREN          shift and go to state 34
+
+    factor                         shift and go to state 80
+
+state 59
+
+    (35) term -> term MOD . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
+
+    NUMBER          shift and go to state 44
+    ID              shift and go to state 38
+    LPAREN          shift and go to state 34
+
+    factor                         shift and go to state 81
+
+state 60
+
+    (39) factor -> LPAREN expression . RPAREN
+    (30) expression -> expression . PLUS term
+    (31) expression -> expression . MINUS term
+
+    RPAREN          shift and go to state 82
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+
+
+state 61
+
+    (11) statement -> ID ASSIGN ID SEMICOLON .
+
+    RBRACE          reduce using rule 11 (statement -> ID ASSIGN ID SEMICOLON .)
+    ID              reduce using rule 11 (statement -> ID ASSIGN ID SEMICOLON .)
+    IF              reduce using rule 11 (statement -> ID ASSIGN ID SEMICOLON .)
+    WHILE           reduce using rule 11 (statement -> ID ASSIGN ID SEMICOLON .)
+    FOR             reduce using rule 11 (statement -> ID ASSIGN ID SEMICOLON .)
+    RETURN          reduce using rule 11 (statement -> ID ASSIGN ID SEMICOLON .)
+
+
+state 62
+
+    (10) statement -> ID ASSIGN NUMBER SEMICOLON .
+
+    RBRACE          reduce using rule 10 (statement -> ID ASSIGN NUMBER SEMICOLON .)
+    ID              reduce using rule 10 (statement -> ID ASSIGN NUMBER SEMICOLON .)
+    IF              reduce using rule 10 (statement -> ID ASSIGN NUMBER SEMICOLON .)
+    WHILE           reduce using rule 10 (statement -> ID ASSIGN NUMBER SEMICOLON .)
+    FOR             reduce using rule 10 (statement -> ID ASSIGN NUMBER SEMICOLON .)
+    RETURN          reduce using rule 10 (statement -> ID ASSIGN NUMBER SEMICOLON .)
+
+
+state 63
+
+    (12) statement -> ID ASSIGN expression SEMICOLON .
+
+    RBRACE          reduce using rule 12 (statement -> ID ASSIGN expression SEMICOLON .)
+    ID              reduce using rule 12 (statement -> ID ASSIGN expression SEMICOLON .)
+    IF              reduce using rule 12 (statement -> ID ASSIGN expression SEMICOLON .)
+    WHILE           reduce using rule 12 (statement -> ID ASSIGN expression SEMICOLON .)
+    FOR             reduce using rule 12 (statement -> ID ASSIGN expression SEMICOLON .)
+    RETURN          reduce using rule 12 (statement -> ID ASSIGN expression SEMICOLON .)
+
+
+state 64
+
+    (29) statement -> ID LPAREN argument_list_opt RPAREN . SEMICOLON
+
+    SEMICOLON       shift and go to state 83
+
+
+state 65
+
+    (51) argument_list -> argument_list COMMA . argument
+    (52) argument -> . expression
+    (30) expression -> . expression PLUS term
+    (31) expression -> . expression MINUS term
+    (32) expression -> . term
+    (33) term -> . term TIMES factor
+    (34) term -> . term DIVIDE factor
+    (35) term -> . term MOD factor
+    (36) term -> . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
+
+    NUMBER          shift and go to state 44
+    ID              shift and go to state 38
+    LPAREN          shift and go to state 34
+
+    argument                       shift and go to state 84
+    expression                     shift and go to state 43
+    term                           shift and go to state 32
+    factor                         shift and go to state 33
+
+state 66
+
+    (13) statement -> IF LPAREN condition RPAREN . LBRACE stmt_list RBRACE
+
+    LBRACE          shift and go to state 85
+
+
+state 67
+
+    (40) condition -> expression LT . expression
+    (30) expression -> . expression PLUS term
+    (31) expression -> . expression MINUS term
+    (32) expression -> . term
+    (33) term -> . term TIMES factor
+    (34) term -> . term DIVIDE factor
+    (35) term -> . term MOD factor
+    (36) term -> . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
+
+    NUMBER          shift and go to state 44
+    ID              shift and go to state 38
+    LPAREN          shift and go to state 34
+
+    expression                     shift and go to state 86
+    term                           shift and go to state 32
+    factor                         shift and go to state 33
+
+state 68
+
+    (41) condition -> expression GT . expression
+    (30) expression -> . expression PLUS term
+    (31) expression -> . expression MINUS term
+    (32) expression -> . term
+    (33) term -> . term TIMES factor
+    (34) term -> . term DIVIDE factor
+    (35) term -> . term MOD factor
+    (36) term -> . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
+
+    NUMBER          shift and go to state 44
+    ID              shift and go to state 38
+    LPAREN          shift and go to state 34
+
+    expression                     shift and go to state 87
+    term                           shift and go to state 32
+    factor                         shift and go to state 33
+
+state 69
+
+    (42) condition -> expression LE . expression
+    (30) expression -> . expression PLUS term
+    (31) expression -> . expression MINUS term
+    (32) expression -> . term
+    (33) term -> . term TIMES factor
+    (34) term -> . term DIVIDE factor
+    (35) term -> . term MOD factor
+    (36) term -> . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
+
+    NUMBER          shift and go to state 44
+    ID              shift and go to state 38
+    LPAREN          shift and go to state 34
+
+    expression                     shift and go to state 88
+    term                           shift and go to state 32
+    factor                         shift and go to state 33
+
+state 70
+
+    (43) condition -> expression GE . expression
+    (30) expression -> . expression PLUS term
+    (31) expression -> . expression MINUS term
+    (32) expression -> . term
+    (33) term -> . term TIMES factor
+    (34) term -> . term DIVIDE factor
+    (35) term -> . term MOD factor
+    (36) term -> . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
+
+    NUMBER          shift and go to state 44
+    ID              shift and go to state 38
+    LPAREN          shift and go to state 34
+
+    expression                     shift and go to state 89
+    term                           shift and go to state 32
+    factor                         shift and go to state 33
+
+state 71
+
+    (44) condition -> expression EQ . expression
+    (30) expression -> . expression PLUS term
+    (31) expression -> . expression MINUS term
+    (32) expression -> . term
+    (33) term -> . term TIMES factor
+    (34) term -> . term DIVIDE factor
+    (35) term -> . term MOD factor
+    (36) term -> . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
+
+    NUMBER          shift and go to state 44
+    ID              shift and go to state 38
+    LPAREN          shift and go to state 34
+
+    expression                     shift and go to state 90
+    term                           shift and go to state 32
+    factor                         shift and go to state 33
+
+state 72
+
+    (45) condition -> expression NE . expression
+    (30) expression -> . expression PLUS term
+    (31) expression -> . expression MINUS term
+    (32) expression -> . term
+    (33) term -> . term TIMES factor
+    (34) term -> . term DIVIDE factor
+    (35) term -> . term MOD factor
+    (36) term -> . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
+
+    NUMBER          shift and go to state 44
+    ID              shift and go to state 38
+    LPAREN          shift and go to state 34
+
+    expression                     shift and go to state 91
+    term                           shift and go to state 32
+    factor                         shift and go to state 33
+
+state 73
+
+    (14) statement -> WHILE LPAREN condition RPAREN . LBRACE stmt_list RBRACE
+
+    LBRACE          shift and go to state 92
+
+
+state 74
+
+    (15) statement -> FOR LPAREN for_init_opt SEMICOLON . condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE
+    (20) condition_opt -> . condition
+    (21) condition_opt -> . empty
+    (40) condition -> . expression LT expression
+    (41) condition -> . expression GT expression
+    (42) condition -> . expression LE expression
+    (43) condition -> . expression GE expression
+    (44) condition -> . expression EQ expression
+    (45) condition -> . expression NE expression
+    (46) empty -> .
+    (30) expression -> . expression PLUS term
+    (31) expression -> . expression MINUS term
+    (32) expression -> . term
+    (33) term -> . term TIMES factor
+    (34) term -> . term DIVIDE factor
+    (35) term -> . term MOD factor
+    (36) term -> . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
+
+    SEMICOLON       reduce using rule 46 (empty -> .)
+    NUMBER          shift and go to state 44
+    ID              shift and go to state 38
+    LPAREN          shift and go to state 34
+
+    condition_opt                  shift and go to state 93
+    condition                      shift and go to state 94
+    empty                          shift and go to state 95
+    expression                     shift and go to state 46
+    term                           shift and go to state 32
+    factor                         shift and go to state 33
+
+state 75
+
+    (16) for_init_opt -> ID ASSIGN . NUMBER
+    (17) for_init_opt -> ID ASSIGN . ID
+    (18) for_init_opt -> ID ASSIGN . expression
+    (30) expression -> . expression PLUS term
+    (31) expression -> . expression MINUS term
+    (32) expression -> . term
+    (33) term -> . term TIMES factor
+    (34) term -> . term DIVIDE factor
+    (35) term -> . term MOD factor
+    (36) term -> . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
+
+    NUMBER          shift and go to state 97
+    ID              shift and go to state 96
+    LPAREN          shift and go to state 34
+
+    expression                     shift and go to state 98
+    term                           shift and go to state 32
+    factor                         shift and go to state 33
+
+state 76
+
+    (30) expression -> expression PLUS term .
+    (33) term -> term . TIMES factor
+    (34) term -> term . DIVIDE factor
+    (35) term -> term . MOD factor
+
+    SEMICOLON       reduce using rule 30 (expression -> expression PLUS term .)
+    PLUS            reduce using rule 30 (expression -> expression PLUS term .)
+    MINUS           reduce using rule 30 (expression -> expression PLUS term .)
+    COMMA           reduce using rule 30 (expression -> expression PLUS term .)
+    RPAREN          reduce using rule 30 (expression -> expression PLUS term .)
+    LT              reduce using rule 30 (expression -> expression PLUS term .)
+    GT              reduce using rule 30 (expression -> expression PLUS term .)
+    LE              reduce using rule 30 (expression -> expression PLUS term .)
+    GE              reduce using rule 30 (expression -> expression PLUS term .)
+    EQ              reduce using rule 30 (expression -> expression PLUS term .)
+    NE              reduce using rule 30 (expression -> expression PLUS term .)
+    TIMES           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    MOD             shift and go to state 59
+
+
+state 77
+
+    (31) expression -> expression MINUS term .
+    (33) term -> term . TIMES factor
+    (34) term -> term . DIVIDE factor
+    (35) term -> term . MOD factor
+
+    SEMICOLON       reduce using rule 31 (expression -> expression MINUS term .)
+    PLUS            reduce using rule 31 (expression -> expression MINUS term .)
+    MINUS           reduce using rule 31 (expression -> expression MINUS term .)
+    COMMA           reduce using rule 31 (expression -> expression MINUS term .)
+    RPAREN          reduce using rule 31 (expression -> expression MINUS term .)
+    LT              reduce using rule 31 (expression -> expression MINUS term .)
+    GT              reduce using rule 31 (expression -> expression MINUS term .)
+    LE              reduce using rule 31 (expression -> expression MINUS term .)
+    GE              reduce using rule 31 (expression -> expression MINUS term .)
+    EQ              reduce using rule 31 (expression -> expression MINUS term .)
+    NE              reduce using rule 31 (expression -> expression MINUS term .)
+    TIMES           shift and go to state 57
+    DIVIDE          shift and go to state 58
+    MOD             shift and go to state 59
+
+
+state 78
+
+    (47) factor -> ID LPAREN argument_list_opt . RPAREN
+
+    RPAREN          shift and go to state 99
+
+
+state 79
+
+    (33) term -> term TIMES factor .
+
+    TIMES           reduce using rule 33 (term -> term TIMES factor .)
+    DIVIDE          reduce using rule 33 (term -> term TIMES factor .)
+    MOD             reduce using rule 33 (term -> term TIMES factor .)
+    SEMICOLON       reduce using rule 33 (term -> term TIMES factor .)
+    PLUS            reduce using rule 33 (term -> term TIMES factor .)
+    MINUS           reduce using rule 33 (term -> term TIMES factor .)
+    COMMA           reduce using rule 33 (term -> term TIMES factor .)
+    RPAREN          reduce using rule 33 (term -> term TIMES factor .)
+    LT              reduce using rule 33 (term -> term TIMES factor .)
+    GT              reduce using rule 33 (term -> term TIMES factor .)
+    LE              reduce using rule 33 (term -> term TIMES factor .)
+    GE              reduce using rule 33 (term -> term TIMES factor .)
+    EQ              reduce using rule 33 (term -> term TIMES factor .)
+    NE              reduce using rule 33 (term -> term TIMES factor .)
+
+
+state 80
+
+    (34) term -> term DIVIDE factor .
+
+    TIMES           reduce using rule 34 (term -> term DIVIDE factor .)
+    DIVIDE          reduce using rule 34 (term -> term DIVIDE factor .)
+    MOD             reduce using rule 34 (term -> term DIVIDE factor .)
+    SEMICOLON       reduce using rule 34 (term -> term DIVIDE factor .)
+    PLUS            reduce using rule 34 (term -> term DIVIDE factor .)
+    MINUS           reduce using rule 34 (term -> term DIVIDE factor .)
+    COMMA           reduce using rule 34 (term -> term DIVIDE factor .)
+    RPAREN          reduce using rule 34 (term -> term DIVIDE factor .)
+    LT              reduce using rule 34 (term -> term DIVIDE factor .)
+    GT              reduce using rule 34 (term -> term DIVIDE factor .)
+    LE              reduce using rule 34 (term -> term DIVIDE factor .)
+    GE              reduce using rule 34 (term -> term DIVIDE factor .)
+    EQ              reduce using rule 34 (term -> term DIVIDE factor .)
+    NE              reduce using rule 34 (term -> term DIVIDE factor .)
+
+
+state 81
+
+    (35) term -> term MOD factor .
+
+    TIMES           reduce using rule 35 (term -> term MOD factor .)
+    DIVIDE          reduce using rule 35 (term -> term MOD factor .)
+    MOD             reduce using rule 35 (term -> term MOD factor .)
+    SEMICOLON       reduce using rule 35 (term -> term MOD factor .)
+    PLUS            reduce using rule 35 (term -> term MOD factor .)
+    MINUS           reduce using rule 35 (term -> term MOD factor .)
+    COMMA           reduce using rule 35 (term -> term MOD factor .)
+    RPAREN          reduce using rule 35 (term -> term MOD factor .)
+    LT              reduce using rule 35 (term -> term MOD factor .)
+    GT              reduce using rule 35 (term -> term MOD factor .)
+    LE              reduce using rule 35 (term -> term MOD factor .)
+    GE              reduce using rule 35 (term -> term MOD factor .)
+    EQ              reduce using rule 35 (term -> term MOD factor .)
+    NE              reduce using rule 35 (term -> term MOD factor .)
+
+
+state 82
+
+    (39) factor -> LPAREN expression RPAREN .
+
+    TIMES           reduce using rule 39 (factor -> LPAREN expression RPAREN .)
+    DIVIDE          reduce using rule 39 (factor -> LPAREN expression RPAREN .)
+    MOD             reduce using rule 39 (factor -> LPAREN expression RPAREN .)
+    SEMICOLON       reduce using rule 39 (factor -> LPAREN expression RPAREN .)
+    PLUS            reduce using rule 39 (factor -> LPAREN expression RPAREN .)
+    MINUS           reduce using rule 39 (factor -> LPAREN expression RPAREN .)
+    COMMA           reduce using rule 39 (factor -> LPAREN expression RPAREN .)
+    RPAREN          reduce using rule 39 (factor -> LPAREN expression RPAREN .)
+    LT              reduce using rule 39 (factor -> LPAREN expression RPAREN .)
+    GT              reduce using rule 39 (factor -> LPAREN expression RPAREN .)
+    LE              reduce using rule 39 (factor -> LPAREN expression RPAREN .)
+    GE              reduce using rule 39 (factor -> LPAREN expression RPAREN .)
+    EQ              reduce using rule 39 (factor -> LPAREN expression RPAREN .)
+    NE              reduce using rule 39 (factor -> LPAREN expression RPAREN .)
+
+
+state 83
+
+    (29) statement -> ID LPAREN argument_list_opt RPAREN SEMICOLON .
+
+    RBRACE          reduce using rule 29 (statement -> ID LPAREN argument_list_opt RPAREN SEMICOLON .)
+    ID              reduce using rule 29 (statement -> ID LPAREN argument_list_opt RPAREN SEMICOLON .)
+    IF              reduce using rule 29 (statement -> ID LPAREN argument_list_opt RPAREN SEMICOLON .)
+    WHILE           reduce using rule 29 (statement -> ID LPAREN argument_list_opt RPAREN SEMICOLON .)
+    FOR             reduce using rule 29 (statement -> ID LPAREN argument_list_opt RPAREN SEMICOLON .)
+    RETURN          reduce using rule 29 (statement -> ID LPAREN argument_list_opt RPAREN SEMICOLON .)
+
+
+state 84
+
+    (51) argument_list -> argument_list COMMA argument .
+
+    COMMA           reduce using rule 51 (argument_list -> argument_list COMMA argument .)
+    RPAREN          reduce using rule 51 (argument_list -> argument_list COMMA argument .)
+
+
+state 85
+
+    (13) statement -> IF LPAREN condition RPAREN LBRACE . stmt_list RBRACE
+    (7) stmt_list -> . stmt_list statement
+    (8) stmt_list -> . statement
+    (9) stmt_list -> . empty
+    (10) statement -> . ID ASSIGN NUMBER SEMICOLON
+    (11) statement -> . ID ASSIGN ID SEMICOLON
+    (12) statement -> . ID ASSIGN expression SEMICOLON
+    (13) statement -> . IF LPAREN condition RPAREN LBRACE stmt_list RBRACE
+    (14) statement -> . WHILE LPAREN condition RPAREN LBRACE stmt_list RBRACE
+    (15) statement -> . FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE
+    (26) statement -> . RETURN expression SEMICOLON
+    (27) statement -> . RETURN NUMBER SEMICOLON
+    (28) statement -> . RETURN ID SEMICOLON
+    (29) statement -> . ID LPAREN argument_list_opt RPAREN SEMICOLON
+    (46) empty -> .
+
+  ! shift/reduce conflict for ID resolved as shift
+  ! shift/reduce conflict for IF resolved as shift
+  ! shift/reduce conflict for WHILE resolved as shift
+  ! shift/reduce conflict for FOR resolved as shift
+  ! shift/reduce conflict for RETURN resolved as shift
+    ID              shift and go to state 14
+    IF              shift and go to state 18
+    WHILE           shift and go to state 19
+    FOR             shift and go to state 20
+    RETURN          shift and go to state 21
+    RBRACE          reduce using rule 46 (empty -> .)
+
+  ! ID              [ reduce using rule 46 (empty -> .) ]
+  ! IF              [ reduce using rule 46 (empty -> .) ]
+  ! WHILE           [ reduce using rule 46 (empty -> .) ]
+  ! FOR             [ reduce using rule 46 (empty -> .) ]
+  ! RETURN          [ reduce using rule 46 (empty -> .) ]
+
+    stmt_list                      shift and go to state 100
+    statement                      shift and go to state 16
+    empty                          shift and go to state 17
+
+state 86
+
+    (40) condition -> expression LT expression .
+    (30) expression -> expression . PLUS term
+    (31) expression -> expression . MINUS term
+
+    RPAREN          reduce using rule 40 (condition -> expression LT expression .)
+    SEMICOLON       reduce using rule 40 (condition -> expression LT expression .)
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+
+
+state 87
+
+    (41) condition -> expression GT expression .
+    (30) expression -> expression . PLUS term
+    (31) expression -> expression . MINUS term
+
+    RPAREN          reduce using rule 41 (condition -> expression GT expression .)
+    SEMICOLON       reduce using rule 41 (condition -> expression GT expression .)
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+
+
+state 88
+
+    (42) condition -> expression LE expression .
+    (30) expression -> expression . PLUS term
+    (31) expression -> expression . MINUS term
+
+    RPAREN          reduce using rule 42 (condition -> expression LE expression .)
+    SEMICOLON       reduce using rule 42 (condition -> expression LE expression .)
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+
+
+state 89
+
+    (43) condition -> expression GE expression .
+    (30) expression -> expression . PLUS term
+    (31) expression -> expression . MINUS term
+
+    RPAREN          reduce using rule 43 (condition -> expression GE expression .)
+    SEMICOLON       reduce using rule 43 (condition -> expression GE expression .)
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+
+
+state 90
+
+    (44) condition -> expression EQ expression .
+    (30) expression -> expression . PLUS term
+    (31) expression -> expression . MINUS term
+
+    RPAREN          reduce using rule 44 (condition -> expression EQ expression .)
+    SEMICOLON       reduce using rule 44 (condition -> expression EQ expression .)
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+
+
+state 91
+
+    (45) condition -> expression NE expression .
+    (30) expression -> expression . PLUS term
+    (31) expression -> expression . MINUS term
+
+    RPAREN          reduce using rule 45 (condition -> expression NE expression .)
+    SEMICOLON       reduce using rule 45 (condition -> expression NE expression .)
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+
+
+state 92
+
+    (14) statement -> WHILE LPAREN condition RPAREN LBRACE . stmt_list RBRACE
+    (7) stmt_list -> . stmt_list statement
+    (8) stmt_list -> . statement
+    (9) stmt_list -> . empty
+    (10) statement -> . ID ASSIGN NUMBER SEMICOLON
+    (11) statement -> . ID ASSIGN ID SEMICOLON
+    (12) statement -> . ID ASSIGN expression SEMICOLON
+    (13) statement -> . IF LPAREN condition RPAREN LBRACE stmt_list RBRACE
+    (14) statement -> . WHILE LPAREN condition RPAREN LBRACE stmt_list RBRACE
+    (15) statement -> . FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE
+    (26) statement -> . RETURN expression SEMICOLON
+    (27) statement -> . RETURN NUMBER SEMICOLON
+    (28) statement -> . RETURN ID SEMICOLON
+    (29) statement -> . ID LPAREN argument_list_opt RPAREN SEMICOLON
+    (46) empty -> .
+
+  ! shift/reduce conflict for ID resolved as shift
+  ! shift/reduce conflict for IF resolved as shift
+  ! shift/reduce conflict for WHILE resolved as shift
+  ! shift/reduce conflict for FOR resolved as shift
+  ! shift/reduce conflict for RETURN resolved as shift
+    ID              shift and go to state 14
+    IF              shift and go to state 18
+    WHILE           shift and go to state 19
+    FOR             shift and go to state 20
+    RETURN          shift and go to state 21
+    RBRACE          reduce using rule 46 (empty -> .)
+
+  ! ID              [ reduce using rule 46 (empty -> .) ]
+  ! IF              [ reduce using rule 46 (empty -> .) ]
+  ! WHILE           [ reduce using rule 46 (empty -> .) ]
+  ! FOR             [ reduce using rule 46 (empty -> .) ]
+  ! RETURN          [ reduce using rule 46 (empty -> .) ]
+
+    stmt_list                      shift and go to state 101
+    statement                      shift and go to state 16
+    empty                          shift and go to state 17
+
+state 93
+
+    (15) statement -> FOR LPAREN for_init_opt SEMICOLON condition_opt . SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE
+
+    SEMICOLON       shift and go to state 102
+
+
+state 94
+
+    (20) condition_opt -> condition .
+
+    SEMICOLON       reduce using rule 20 (condition_opt -> condition .)
+
+
+state 95
+
+    (21) condition_opt -> empty .
+
+    SEMICOLON       reduce using rule 21 (condition_opt -> empty .)
+
+
+state 96
+
+    (17) for_init_opt -> ID ASSIGN ID .
+    (38) factor -> ID .
+    (47) factor -> ID . LPAREN argument_list_opt RPAREN
+
+  ! reduce/reduce conflict for SEMICOLON resolved using rule 17 (for_init_opt -> ID ASSIGN ID .)
+    SEMICOLON       reduce using rule 17 (for_init_opt -> ID ASSIGN ID .)
+    TIMES           reduce using rule 38 (factor -> ID .)
+    DIVIDE          reduce using rule 38 (factor -> ID .)
+    MOD             reduce using rule 38 (factor -> ID .)
+    PLUS            reduce using rule 38 (factor -> ID .)
+    MINUS           reduce using rule 38 (factor -> ID .)
+    LPAREN          shift and go to state 56
+
+  ! SEMICOLON       [ reduce using rule 38 (factor -> ID .) ]
+
+
+state 97
+
+    (16) for_init_opt -> ID ASSIGN NUMBER .
+    (37) factor -> NUMBER .
+
+  ! reduce/reduce conflict for SEMICOLON resolved using rule 16 (for_init_opt -> ID ASSIGN NUMBER .)
+    SEMICOLON       reduce using rule 16 (for_init_opt -> ID ASSIGN NUMBER .)
+    TIMES           reduce using rule 37 (factor -> NUMBER .)
+    DIVIDE          reduce using rule 37 (factor -> NUMBER .)
+    MOD             reduce using rule 37 (factor -> NUMBER .)
+    PLUS            reduce using rule 37 (factor -> NUMBER .)
+    MINUS           reduce using rule 37 (factor -> NUMBER .)
+
+  ! SEMICOLON       [ reduce using rule 37 (factor -> NUMBER .) ]
+
+
+state 98
+
+    (18) for_init_opt -> ID ASSIGN expression .
+    (30) expression -> expression . PLUS term
+    (31) expression -> expression . MINUS term
+
+    SEMICOLON       reduce using rule 18 (for_init_opt -> ID ASSIGN expression .)
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+
+
+state 99
+
+    (47) factor -> ID LPAREN argument_list_opt RPAREN .
+
+    TIMES           reduce using rule 47 (factor -> ID LPAREN argument_list_opt RPAREN .)
+    DIVIDE          reduce using rule 47 (factor -> ID LPAREN argument_list_opt RPAREN .)
+    MOD             reduce using rule 47 (factor -> ID LPAREN argument_list_opt RPAREN .)
+    SEMICOLON       reduce using rule 47 (factor -> ID LPAREN argument_list_opt RPAREN .)
+    PLUS            reduce using rule 47 (factor -> ID LPAREN argument_list_opt RPAREN .)
+    MINUS           reduce using rule 47 (factor -> ID LPAREN argument_list_opt RPAREN .)
+    COMMA           reduce using rule 47 (factor -> ID LPAREN argument_list_opt RPAREN .)
+    RPAREN          reduce using rule 47 (factor -> ID LPAREN argument_list_opt RPAREN .)
+    LT              reduce using rule 47 (factor -> ID LPAREN argument_list_opt RPAREN .)
+    GT              reduce using rule 47 (factor -> ID LPAREN argument_list_opt RPAREN .)
+    LE              reduce using rule 47 (factor -> ID LPAREN argument_list_opt RPAREN .)
+    GE              reduce using rule 47 (factor -> ID LPAREN argument_list_opt RPAREN .)
+    EQ              reduce using rule 47 (factor -> ID LPAREN argument_list_opt RPAREN .)
+    NE              reduce using rule 47 (factor -> ID LPAREN argument_list_opt RPAREN .)
+
+
+state 100
+
+    (13) statement -> IF LPAREN condition RPAREN LBRACE stmt_list . RBRACE
+    (7) stmt_list -> stmt_list . statement
+    (10) statement -> . ID ASSIGN NUMBER SEMICOLON
+    (11) statement -> . ID ASSIGN ID SEMICOLON
+    (12) statement -> . ID ASSIGN expression SEMICOLON
+    (13) statement -> . IF LPAREN condition RPAREN LBRACE stmt_list RBRACE
+    (14) statement -> . WHILE LPAREN condition RPAREN LBRACE stmt_list RBRACE
+    (15) statement -> . FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE
+    (26) statement -> . RETURN expression SEMICOLON
+    (27) statement -> . RETURN NUMBER SEMICOLON
+    (28) statement -> . RETURN ID SEMICOLON
+    (29) statement -> . ID LPAREN argument_list_opt RPAREN SEMICOLON
+
+    RBRACE          shift and go to state 103
+    ID              shift and go to state 14
+    IF              shift and go to state 18
+    WHILE           shift and go to state 19
+    FOR             shift and go to state 20
+    RETURN          shift and go to state 21
+
+    statement                      shift and go to state 25
+
+state 101
+
+    (14) statement -> WHILE LPAREN condition RPAREN LBRACE stmt_list . RBRACE
+    (7) stmt_list -> stmt_list . statement
+    (10) statement -> . ID ASSIGN NUMBER SEMICOLON
+    (11) statement -> . ID ASSIGN ID SEMICOLON
+    (12) statement -> . ID ASSIGN expression SEMICOLON
+    (13) statement -> . IF LPAREN condition RPAREN LBRACE stmt_list RBRACE
+    (14) statement -> . WHILE LPAREN condition RPAREN LBRACE stmt_list RBRACE
+    (15) statement -> . FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE
+    (26) statement -> . RETURN expression SEMICOLON
+    (27) statement -> . RETURN NUMBER SEMICOLON
+    (28) statement -> . RETURN ID SEMICOLON
+    (29) statement -> . ID LPAREN argument_list_opt RPAREN SEMICOLON
+
+    RBRACE          shift and go to state 104
+    ID              shift and go to state 14
+    IF              shift and go to state 18
+    WHILE           shift and go to state 19
+    FOR             shift and go to state 20
+    RETURN          shift and go to state 21
+
+    statement                      shift and go to state 25
+
+state 102
+
+    (15) statement -> FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON . for_update_opt RPAREN LBRACE stmt_list RBRACE
+    (22) for_update_opt -> . ID ASSIGN NUMBER
+    (23) for_update_opt -> . ID ASSIGN ID
+    (24) for_update_opt -> . ID ASSIGN expression
+    (25) for_update_opt -> . empty
+    (46) empty -> .
+
+    ID              shift and go to state 106
+    RPAREN          reduce using rule 46 (empty -> .)
+
+    for_update_opt                 shift and go to state 105
+    empty                          shift and go to state 107
+
+state 103
+
+    (13) statement -> IF LPAREN condition RPAREN LBRACE stmt_list RBRACE .
+
+    RBRACE          reduce using rule 13 (statement -> IF LPAREN condition RPAREN LBRACE stmt_list RBRACE .)
+    ID              reduce using rule 13 (statement -> IF LPAREN condition RPAREN LBRACE stmt_list RBRACE .)
+    IF              reduce using rule 13 (statement -> IF LPAREN condition RPAREN LBRACE stmt_list RBRACE .)
+    WHILE           reduce using rule 13 (statement -> IF LPAREN condition RPAREN LBRACE stmt_list RBRACE .)
+    FOR             reduce using rule 13 (statement -> IF LPAREN condition RPAREN LBRACE stmt_list RBRACE .)
+    RETURN          reduce using rule 13 (statement -> IF LPAREN condition RPAREN LBRACE stmt_list RBRACE .)
+
+
+state 104
+
+    (14) statement -> WHILE LPAREN condition RPAREN LBRACE stmt_list RBRACE .
+
+    RBRACE          reduce using rule 14 (statement -> WHILE LPAREN condition RPAREN LBRACE stmt_list RBRACE .)
+    ID              reduce using rule 14 (statement -> WHILE LPAREN condition RPAREN LBRACE stmt_list RBRACE .)
+    IF              reduce using rule 14 (statement -> WHILE LPAREN condition RPAREN LBRACE stmt_list RBRACE .)
+    WHILE           reduce using rule 14 (statement -> WHILE LPAREN condition RPAREN LBRACE stmt_list RBRACE .)
+    FOR             reduce using rule 14 (statement -> WHILE LPAREN condition RPAREN LBRACE stmt_list RBRACE .)
+    RETURN          reduce using rule 14 (statement -> WHILE LPAREN condition RPAREN LBRACE stmt_list RBRACE .)
+
+
+state 105
+
+    (15) statement -> FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt . RPAREN LBRACE stmt_list RBRACE
+
+    RPAREN          shift and go to state 108
+
+
+state 106
+
+    (22) for_update_opt -> ID . ASSIGN NUMBER
+    (23) for_update_opt -> ID . ASSIGN ID
+    (24) for_update_opt -> ID . ASSIGN expression
+
+    ASSIGN          shift and go to state 109
+
+
+state 107
+
+    (25) for_update_opt -> empty .
+
+    RPAREN          reduce using rule 25 (for_update_opt -> empty .)
+
+
+state 108
+
+    (15) statement -> FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN . LBRACE stmt_list RBRACE
+
+    LBRACE          shift and go to state 110
+
+
+state 109
+
+    (22) for_update_opt -> ID ASSIGN . NUMBER
+    (23) for_update_opt -> ID ASSIGN . ID
+    (24) for_update_opt -> ID ASSIGN . expression
+    (30) expression -> . expression PLUS term
+    (31) expression -> . expression MINUS term
+    (32) expression -> . term
+    (33) term -> . term TIMES factor
+    (34) term -> . term DIVIDE factor
+    (35) term -> . term MOD factor
+    (36) term -> . factor
+    (37) factor -> . NUMBER
+    (38) factor -> . ID
+    (39) factor -> . LPAREN expression RPAREN
+    (47) factor -> . ID LPAREN argument_list_opt RPAREN
+
+    NUMBER          shift and go to state 112
+    ID              shift and go to state 111
+    LPAREN          shift and go to state 34
+
+    expression                     shift and go to state 113
+    term                           shift and go to state 32
+    factor                         shift and go to state 33
+
+state 110
+
+    (15) statement -> FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE . stmt_list RBRACE
+    (7) stmt_list -> . stmt_list statement
+    (8) stmt_list -> . statement
+    (9) stmt_list -> . empty
+    (10) statement -> . ID ASSIGN NUMBER SEMICOLON
+    (11) statement -> . ID ASSIGN ID SEMICOLON
+    (12) statement -> . ID ASSIGN expression SEMICOLON
+    (13) statement -> . IF LPAREN condition RPAREN LBRACE stmt_list RBRACE
+    (14) statement -> . WHILE LPAREN condition RPAREN LBRACE stmt_list RBRACE
+    (15) statement -> . FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE
+    (26) statement -> . RETURN expression SEMICOLON
+    (27) statement -> . RETURN NUMBER SEMICOLON
+    (28) statement -> . RETURN ID SEMICOLON
+    (29) statement -> . ID LPAREN argument_list_opt RPAREN SEMICOLON
+    (46) empty -> .
+
+  ! shift/reduce conflict for ID resolved as shift
+  ! shift/reduce conflict for IF resolved as shift
+  ! shift/reduce conflict for WHILE resolved as shift
+  ! shift/reduce conflict for FOR resolved as shift
+  ! shift/reduce conflict for RETURN resolved as shift
+    ID              shift and go to state 14
+    IF              shift and go to state 18
+    WHILE           shift and go to state 19
+    FOR             shift and go to state 20
+    RETURN          shift and go to state 21
+    RBRACE          reduce using rule 46 (empty -> .)
+
+  ! ID              [ reduce using rule 46 (empty -> .) ]
+  ! IF              [ reduce using rule 46 (empty -> .) ]
+  ! WHILE           [ reduce using rule 46 (empty -> .) ]
+  ! FOR             [ reduce using rule 46 (empty -> .) ]
+  ! RETURN          [ reduce using rule 46 (empty -> .) ]
+
+    stmt_list                      shift and go to state 114
+    statement                      shift and go to state 16
+    empty                          shift and go to state 17
+
+state 111
+
+    (23) for_update_opt -> ID ASSIGN ID .
+    (38) factor -> ID .
+    (47) factor -> ID . LPAREN argument_list_opt RPAREN
+
+  ! reduce/reduce conflict for RPAREN resolved using rule 23 (for_update_opt -> ID ASSIGN ID .)
+    RPAREN          reduce using rule 23 (for_update_opt -> ID ASSIGN ID .)
+    TIMES           reduce using rule 38 (factor -> ID .)
+    DIVIDE          reduce using rule 38 (factor -> ID .)
+    MOD             reduce using rule 38 (factor -> ID .)
+    PLUS            reduce using rule 38 (factor -> ID .)
+    MINUS           reduce using rule 38 (factor -> ID .)
+    LPAREN          shift and go to state 56
+
+  ! RPAREN          [ reduce using rule 38 (factor -> ID .) ]
+
+
+state 112
+
+    (22) for_update_opt -> ID ASSIGN NUMBER .
+    (37) factor -> NUMBER .
+
+  ! reduce/reduce conflict for RPAREN resolved using rule 22 (for_update_opt -> ID ASSIGN NUMBER .)
+    RPAREN          reduce using rule 22 (for_update_opt -> ID ASSIGN NUMBER .)
+    TIMES           reduce using rule 37 (factor -> NUMBER .)
+    DIVIDE          reduce using rule 37 (factor -> NUMBER .)
+    MOD             reduce using rule 37 (factor -> NUMBER .)
+    PLUS            reduce using rule 37 (factor -> NUMBER .)
+    MINUS           reduce using rule 37 (factor -> NUMBER .)
+
+  ! RPAREN          [ reduce using rule 37 (factor -> NUMBER .) ]
+
+
+state 113
+
+    (24) for_update_opt -> ID ASSIGN expression .
+    (30) expression -> expression . PLUS term
+    (31) expression -> expression . MINUS term
+
+    RPAREN          reduce using rule 24 (for_update_opt -> ID ASSIGN expression .)
+    PLUS            shift and go to state 52
+    MINUS           shift and go to state 53
+
+
+state 114
+
+    (15) statement -> FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list . RBRACE
+    (7) stmt_list -> stmt_list . statement
+    (10) statement -> . ID ASSIGN NUMBER SEMICOLON
+    (11) statement -> . ID ASSIGN ID SEMICOLON
+    (12) statement -> . ID ASSIGN expression SEMICOLON
+    (13) statement -> . IF LPAREN condition RPAREN LBRACE stmt_list RBRACE
+    (14) statement -> . WHILE LPAREN condition RPAREN LBRACE stmt_list RBRACE
+    (15) statement -> . FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE
+    (26) statement -> . RETURN expression SEMICOLON
+    (27) statement -> . RETURN NUMBER SEMICOLON
+    (28) statement -> . RETURN ID SEMICOLON
+    (29) statement -> . ID LPAREN argument_list_opt RPAREN SEMICOLON
+
+    RBRACE          shift and go to state 115
+    ID              shift and go to state 14
+    IF              shift and go to state 18
+    WHILE           shift and go to state 19
+    FOR             shift and go to state 20
+    RETURN          shift and go to state 21
+
+    statement                      shift and go to state 25
+
+state 115
+
+    (15) statement -> FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE .
+
+    RBRACE          reduce using rule 15 (statement -> FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE .)
+    ID              reduce using rule 15 (statement -> FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE .)
+    IF              reduce using rule 15 (statement -> FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE .)
+    WHILE           reduce using rule 15 (statement -> FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE .)
+    FOR             reduce using rule 15 (statement -> FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE .)
+    RETURN          reduce using rule 15 (statement -> FOR LPAREN for_init_opt SEMICOLON condition_opt SEMICOLON for_update_opt RPAREN LBRACE stmt_list RBRACE .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for ID in state 12 resolved as shift
+WARNING: shift/reduce conflict for IF in state 12 resolved as shift
+WARNING: shift/reduce conflict for WHILE in state 12 resolved as shift
+WARNING: shift/reduce conflict for FOR in state 12 resolved as shift
+WARNING: shift/reduce conflict for RETURN in state 12 resolved as shift
+WARNING: shift/reduce conflict for SEMICOLON in state 30 resolved as shift
+WARNING: shift/reduce conflict for SEMICOLON in state 31 resolved as shift
+WARNING: shift/reduce conflict for SEMICOLON in state 35 resolved as shift
+WARNING: shift/reduce conflict for SEMICOLON in state 36 resolved as shift
+WARNING: shift/reduce conflict for ID in state 85 resolved as shift
+WARNING: shift/reduce conflict for IF in state 85 resolved as shift
+WARNING: shift/reduce conflict for WHILE in state 85 resolved as shift
+WARNING: shift/reduce conflict for FOR in state 85 resolved as shift
+WARNING: shift/reduce conflict for RETURN in state 85 resolved as shift
+WARNING: shift/reduce conflict for ID in state 92 resolved as shift
+WARNING: shift/reduce conflict for IF in state 92 resolved as shift
+WARNING: shift/reduce conflict for WHILE in state 92 resolved as shift
+WARNING: shift/reduce conflict for FOR in state 92 resolved as shift
+WARNING: shift/reduce conflict for RETURN in state 92 resolved as shift
+WARNING: shift/reduce conflict for ID in state 110 resolved as shift
+WARNING: shift/reduce conflict for IF in state 110 resolved as shift
+WARNING: shift/reduce conflict for WHILE in state 110 resolved as shift
+WARNING: shift/reduce conflict for FOR in state 110 resolved as shift
+WARNING: shift/reduce conflict for RETURN in state 110 resolved as shift
+WARNING: reduce/reduce conflict in state 96 resolved using rule (for_init_opt -> ID ASSIGN ID)
+WARNING: rejected rule (factor -> ID) in state 96
+WARNING: reduce/reduce conflict in state 97 resolved using rule (for_init_opt -> ID ASSIGN NUMBER)
+WARNING: rejected rule (factor -> NUMBER) in state 97
+WARNING: reduce/reduce conflict in state 111 resolved using rule (for_update_opt -> ID ASSIGN ID)
+WARNING: rejected rule (factor -> ID) in state 111
+WARNING: reduce/reduce conflict in state 112 resolved using rule (for_update_opt -> ID ASSIGN NUMBER)
+WARNING: rejected rule (factor -> NUMBER) in state 112

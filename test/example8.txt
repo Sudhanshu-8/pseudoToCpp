@@ -1,0 +1,9 @@
+\Fn ExampleEight() {
+    x \gets 0;
+    y \gets 10;
+    \While (x < y) {
+        x \gets x + 2;
+        y \gets y - 1;
+    }
+    \KwRet x;
+}

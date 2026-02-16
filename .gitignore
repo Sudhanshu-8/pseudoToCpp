@@ -1,0 +1,13 @@
+<<<<<<< HEAD
+frontend/node_modules
+input.txt
+output.cpp
+parsetab.py
+parser.out
+
+WARP.md
+__pycache__/*.pyc
+.vscode/*.json
+control_flow/__pycache__/*.pyc
+document.txt
+

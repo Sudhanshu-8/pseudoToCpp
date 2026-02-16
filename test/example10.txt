@@ -1,0 +1,9 @@
+\Fn ExampleTen() {
+    a \gets 5;
+    b \gets 2;
+    c \gets (a * a) + (b * b);
+    \If (c > 20) {
+        \KwRet c;
+    }
+    \KwRet a;
+}

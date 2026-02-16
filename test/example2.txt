@@ -1,0 +1,9 @@
+\Fn ExampleTwo() {
+    i \gets 0;
+    sum \gets 0;
+    \While (i < 5) {
+        sum \gets sum + i;
+        i \gets i + 1;
+    }
+    \KwRet sum;
+}

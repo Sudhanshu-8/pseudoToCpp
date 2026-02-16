@@ -1,0 +1,8 @@
+// purpose: should trigger a syntax error (missing closing brace)
+\Fn BadMissingBrace() {
+    x \gets 1;
+    \While (x < 5) {
+        x \gets x + 1;
+    }
+}
+// no closing brace for the function here

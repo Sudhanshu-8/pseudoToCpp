@@ -1,0 +1,10 @@
+\Fn ExampleFive(n,i) {
+    n \gets 5;
+    fact \gets 1;
+    i \gets 1;
+    \While (i <= n) {
+        fact \gets fact * i;
+        i \gets i + 1;
+    }
+    \KwRet fact;
+}

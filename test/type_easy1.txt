@@ -1,0 +1,6 @@
+// difficulty: easy-type
+\Fn TypeEasyOne() {
+    x \gets 10;
+    y \gets x + 5;
+    \KwRet y;
+}

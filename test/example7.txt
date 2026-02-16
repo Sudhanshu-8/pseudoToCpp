@@ -1,0 +1,10 @@
+\Fn ExampleSeven() {
+    i \gets 0;
+    evenSum \gets 0;
+    \For (i \gets 0; i < 20; i \gets i + 1) {
+        \If ((i % 2) == 0) {
+            evenSum \gets evenSum + i;
+        }
+    }
+    \KwRet evenSum;
+}

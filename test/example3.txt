@@ -1,0 +1,8 @@
+\Fn ExampleThree() {
+    x \gets 10;
+    y \gets 20;
+    \If (x < y) {
+        \KwRet y;
+    }
+    \KwRet x;
+}

@@ -1,0 +1,13 @@
+// difficulty: medium-type
+\Fn TypeMediumOne() {
+    n \gets 5;
+    sum \gets 0;
+    i \gets 0;
+    \While (i < n) {
+        term \gets i * 2;
+        sum \gets sum + term;
+        i \gets i + 1;
+    }
+    avg \gets sum / n;
+    \KwRet avg;
+}

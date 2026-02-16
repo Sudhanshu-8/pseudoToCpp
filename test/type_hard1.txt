@@ -1,0 +1,18 @@
+// difficulty: hard-type
+\Fn TypeHardOne() {
+    rows \gets 3;
+    cols \gets 4;
+    r \gets 0;
+    \While (r < rows) {
+        c \gets 0;
+        rowSum \gets 0;
+        \While (c < cols) {
+            value \gets (r * cols) + c;
+            rowSum \gets rowSum + value;
+            c \gets c + 1;
+        }
+        normalized \gets rowSum / cols;
+        r \gets r + 1;
+    }
+    \KwRet rows;
+}
