@@ -45,8 +45,8 @@ body {
 .app-main {
   flex: 1;
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  gap: 20px;
+  grid-template-columns: 1fr 240px 1fr; /* Left, Middle, Right */
+  gap: 16px;
   margin-top: 4px;
   min-height: 0;
 }
@@ -61,10 +61,20 @@ body {
   min-height: 0;
 }
 
+.pane-middle {
+  background: linear-gradient(to bottom, #fefce8, #f9fafb);
+  border: 1px solid #fde047;
+}
+
 .pane-header {
   padding: 10px 14px;
   border-bottom: 1px solid #e5e7eb;
   background: linear-gradient(to right, #eef2ff, #f9fafb);
+}
+
+.pane-middle .pane-header {
+  background: linear-gradient(to right, #fef9c3, #fefce8);
+  border-bottom: 1px solid #fde047;
 }
 
 .pane-header h2 {
@@ -92,6 +102,82 @@ body {
 
 .code-input::placeholder {
   color: #9ca3af;
+}
+
+/* Type History Styles */
+.type-history {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.type-history-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #9ca3af;
+  font-size: 0.85rem;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+
+.type-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.type-history-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  font-size: 0.85rem;
+  transition: transform 100ms ease, box-shadow 100ms ease;
+  animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.type-history-item:hover {
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.type-var {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-weight: 600;
+  color: #1f2937;
+  flex-shrink: 0;
+}
+
+.type-arrow {
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+.type-dtype {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  color: #2563eb;
+  font-weight: 500;
+  background: #dbeafe;
+  padding: 2px 8px;
+  border-radius: 4px;
+  flex-shrink: 0;
 }
 
 .app-footer {
@@ -185,5 +271,31 @@ body {
 
   .app-main {
     grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
+  
+  .pane-middle {
+    order: -1; /* Show type map first on mobile */
+    max-height: 200px;
   }
 }
+/* ```
+
+## Key Features:
+
+✅ **3-column layout** - Pseudo-code | Type Map | C++ Output  
+✅ **Type history queue** - Shows all type assignments in order  
+✅ **Visual design** - Yellow/gold theme for middle panel, clean card-based items  
+✅ **Animated entries** - New types slide in smoothly  
+✅ **Hover effects** - Items respond to hover  
+✅ **Auto-scroll** - Overflow-y auto for long lists  
+✅ **Reset on convert** - Type history clears when you click "Convert to C++" again  
+✅ **Empty state** - Shows "No types assigned yet" when empty  
+✅ **Responsive** - On mobile, type map shows on top
+
+The middle panel displays items like:
+```
+a → int
+b → float
+sum → int
+function_return_type → int */

@@ -13,6 +13,9 @@ function App() {
 
   // Tracks previously chosen datatypes so the backend never has to ask on stdin.
   const [typeHints, setTypeHints] = useState({});
+  
+  // NEW: Track type assignment history for display
+  const [typeHistory, setTypeHistory] = useState([]);
 
   // When the backend reports a missing type, we surface a prompt in the UI.
   const [pendingVar, setPendingVar] = useState(null);
@@ -31,8 +34,12 @@ function App() {
     setError("");
     setCpp("");
     setPendingVar(null);
+    // Reset type history when starting a fresh conversion
+    setTypeHistory([]);
+    setTypeHints({});
+    
     try {
-      const data = await sendConvertRequest(code, typeHints);
+      const data = await sendConvertRequest(code, {});
       setCpp(data.cpp || "");
     } catch (err) {
       const resp = err.response?.data;
@@ -52,15 +59,21 @@ function App() {
 
   const handleConfirmType = async () => {
     if (!pendingVar || !selectedType) return;
+    
     const updatedHints = {
       ...typeHints,
       [pendingVar]: selectedType,
     };
     setTypeHints(updatedHints);
+    
+    // Add to type history
+    setTypeHistory(prev => [...prev, { variable: pendingVar, type: selectedType }]);
+    
     setPendingVar(null);
     setError("");
     setLoading(true);
     setCpp("");
+    
     try {
       const data = await sendConvertRequest(code, updatedHints);
       setCpp(data.cpp || "");
@@ -107,6 +120,31 @@ function App() {
               spellCheck={false}
             />
           </section>
+          
+          {/* NEW: Type History Panel */}
+          <section className="pane pane-middle">
+            <div className="pane-header">
+              <h2>Type Map</h2>
+            </div>
+            <div className="type-history">
+              {typeHistory.length === 0 ? (
+                <div className="type-history-empty">
+                  No types assigned yet
+                </div>
+              ) : (
+                <div className="type-history-list">
+                  {typeHistory.map((item, idx) => (
+                    <div key={idx} className="type-history-item">
+                      <span className="type-var">{item.variable}</span>
+                      <span className="type-arrow">→</span>
+                      <span className="type-dtype">{item.type}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+          
           <section className="pane pane-right">
             <div className="pane-header">
               <h2>C++ Output</h2>
