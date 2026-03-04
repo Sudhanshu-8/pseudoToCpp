@@ -9,18 +9,12 @@ _for_mod = importlib.import_module("control_flow.for")
 _while_mod = importlib.import_module("control_flow.while")
 
 symbol_table = {}
-has_return = False
 
 valid_dtypes = ["int", "float", "string", "long", "char", "array", "vector"]
 
 
 class MissingTypeError(Exception):
-    """Raised when the parser needs a datatype for a variable but none is provided.
-
-    The intention is that higher layers (CLI, HTTP server, UI) catch this and
-    ask the user for the datatype in an appropriate way (terminal prompt,
-    frontend dialog, etc.).
-    """
+    """Raised when the parser needs a datatype for a variable but none is provided."""
 
 
 # Optional callback that external callers can register to supply types.
@@ -28,41 +22,19 @@ type_provider = None
 
 def parse_code(code):
     """Parse pseudo-code and return AST. Reset state before parsing."""
-    global symbol_table, has_return
+    global symbol_table
     symbol_table = {}
-    has_return = False
     return parser.parse(code)
 
 def register_type_provider(fn):
-    """Register a callback used to resolve unknown variable types.
-
-    The callback should have the signature ``fn(var_name: str, valid: list[str])``
-    and return a string from ``valid``. If it cannot provide a type it should
-    raise ``MissingTypeError``.
-    """
-
+    """Register a callback used to resolve unknown variable types."""
     global type_provider
     type_provider = fn
-
-
-# Detect datatype automatically based on assigned value
-def infer_type(value):
-    if isinstance(value, int):
-        return "int"
-    if isinstance(value, float):
-        return "float"
-    if isinstance(value, str):
-        if value.startswith('"') and value.endswith('"'):
-            return "string"
-        if value.startswith("'") and value.endswith("'"):
-            return "char"
-    return None
 
 
 # Ask datatype from a registered provider (no direct stdin usage here).
 def ask_type(var):
     if type_provider is None:
-        # No provider registered – force the caller to handle this case.
         raise MissingTypeError(var)
 
     dtype = type_provider(var, valid_dtypes).strip()
@@ -72,33 +44,25 @@ def ask_type(var):
 
 def handle_assignment(var, value, is_expression=False):
     """Update symbol_table for an assignment and return normalized value string.
-
-    For complex expressions we mostly fall back to asking the user for the type
-    when the variable has not been seen before.
-
-    This also ensures both the assigned variable and any source identifier
-    (e.g. in "b = a") have datatypes recorded.
+    
+    Always ask user for variable types - no automatic inference.
     """
     global symbol_table
 
-    # Simple constants keep type inference
-    if isinstance(value, (int, float)):
-        inferred = infer_type(value)
-        if inferred:
-            symbol_table[var] = inferred
-    elif isinstance(value, str):
-        # If RHS is a single identifier (not an expression like "x + y")
-        if not is_expression and value.isidentifier():
-            # Ensure the source identifier has a type.
-            if value not in symbol_table:
-                symbol_table[value] = ask_type(value)
-
-            # Propagate type from source to target variable.
-            symbol_table[var] = symbol_table[value]
-        else:
-            # For unknown or expression-based assignments, ask for var's type
-            if var not in symbol_table:
-                symbol_table[var] = ask_type(var)
+    # For identifier assignments like "b = a"
+    if isinstance(value, str) and not is_expression and value.isidentifier():
+        # Ensure the source identifier has a type
+        if value not in symbol_table:
+            symbol_table[value] = ask_type(value)
+        
+        # Ask for target variable type (don't auto-propagate)
+        if var not in symbol_table:
+            symbol_table[var] = ask_type(var)
+    else:
+        # For all other assignments (constants, expressions, etc.)
+        # Always ask for the variable's type
+        if var not in symbol_table:
+            symbol_table[var] = ask_type(var)
 
     return str(value)
 
@@ -116,34 +80,95 @@ def _identifiers_in_expr(expr):
 # -------- Grammar Rules --------
 
 def p_program(p):
-    """program : function"""
-    # DON'T reset here - symbol_table is already populated by child rules
-    p[0] = [p[1]]
+    """program : function_list"""
+    p[0] = p[1]
+
+def p_function_list(p):
+    """function_list : function_list function
+                     | function"""
+    if len(p) == 3:
+        p[0] = p[1] + [p[2]]
+    else:
+        p[0] = [p[1]]
 
 def p_function(p):
     """function : FN ID LPAREN param_list_opt RPAREN LBRACE stmt_list RBRACE"""
-    global has_return, symbol_table
+    global symbol_table
+    func_name = p[2]
+    params = p[4] or []
+    body = p[7]
     
-    # Get return type from symbol table or default to void
-    if has_return and "__return_type__" in symbol_table:
-        ret_type = symbol_table.pop("__return_type__")  # Remove special key
+    # Check if this function has a return statement
+    has_return_stmt = any(
+        stmt.get("type") == "return"
+        for stmt in body
+        if isinstance(stmt, dict)
+    )
+
+    # Determine return type
+    if has_return_stmt and "__pending_return_type__" in symbol_table:
+        ret_type = symbol_table.pop("__pending_return_type__")
+    elif has_return_stmt:
+        ret_type = ask_type(f"return_type_of_{func_name}")
     else:
         ret_type = "void"
     
-    params = p[4] or []
-
     # Ensure parameter types are known at parse time
     for param in params:
         if param not in symbol_table:
             symbol_table[param] = ask_type(param)
 
+    # Collect variables used in this function's body
+    func_vars = set(params)  # Start with parameters
+    
+    def collect_vars(stmts):
+        """Recursively collect all variables used in statements."""
+        for stmt in stmts:
+            if not isinstance(stmt, dict):
+                continue
+            
+            if stmt.get("type") == "assign":
+                func_vars.add(stmt["var"])
+                # Also collect identifiers from the value expression
+                for ident in _identifiers_in_expr(stmt.get("value", "")):
+                    if ident in symbol_table:
+                        func_vars.add(ident)
+            
+            elif stmt.get("type") in ["if", "while"]:
+                # Collect from condition
+                for ident in _identifiers_in_expr(stmt.get("condition", "")):
+                    if ident in symbol_table:
+                        func_vars.add(ident)
+                # Recursively collect from body
+                collect_vars(stmt.get("body", []))
+            
+            elif stmt.get("type") == "for":
+                if stmt.get("init"):
+                    func_vars.add(stmt["init"]["var"])
+                if stmt.get("update"):
+                    func_vars.add(stmt["update"]["var"])
+                for ident in _identifiers_in_expr(stmt.get("condition", "")):
+                    if ident in symbol_table:
+                        func_vars.add(ident)
+                collect_vars(stmt.get("body", []))
+            
+            elif stmt.get("type") == "return":
+                for ident in _identifiers_in_expr(str(stmt.get("value", ""))):
+                    if ident in symbol_table:
+                        func_vars.add(ident)
+    
+    collect_vars(body)
+
     p[0] = {
         "type": "function",
-        "name": p[2],
+        "name": func_name,
         "params": params,
-        "body": p[7],
+        "body": body,
         "return_type": ret_type,
+        "variables": func_vars,  # Store which variables belong to this function
     }
+
+
 def p_param_list_opt(p):
     """param_list_opt : param_list
                       | empty"""
@@ -245,7 +270,6 @@ def p_for_update_opt(p):
 
     var = p[1]
     val = p[3]
-    # Update should never redeclare the type, but should still track it
     is_expr = not isinstance(val, (int, float)) and not (isinstance(val, str) and val.isidentifier())
     normalized = handle_assignment(var, val, is_expression=is_expr)
     p[0] = {"type": "assign", "var": var, "value": normalized}
@@ -255,14 +279,12 @@ def p_statement_return(p):
     """statement : RETURN expression SEMICOLON
                  | RETURN NUMBER SEMICOLON
                  | RETURN ID SEMICOLON"""
-    global has_return
-    has_return = True
     
     ret_val = p[2]
     
     # Always ask for return type - no inference
-    if "__return_type__" not in symbol_table:
-        symbol_table["__return_type__"] = ask_type("function_return_type")
+    if "__pending_return_type__" not in symbol_table:
+        symbol_table["__pending_return_type__"] = ask_type("function_return_type")
     
     p[0] = {"type": "return", "value": ret_val}
 
@@ -311,7 +333,7 @@ def p_factor_number(p):
 def p_factor_id(p):
     """factor : ID"""
     var = p[1]
-    # Ensure any identifier used in an expression has a datatype.
+    # Ensure any identifier used in an expression has a datatype
     if var not in symbol_table:
         symbol_table[var] = ask_type(var)
     p[0] = var
@@ -338,11 +360,7 @@ def p_empty(p):
 
 
 def p_error(p):
-    """PLY error handler.
-
-    We raise an exception instead of exiting so that callers (CLI or server)
-    can decide how to surface the error.
-    """
+    """PLY error handler."""
     if p:
         raise SyntaxError(f"Syntax error near '{p.value}'")
     raise SyntaxError("Syntax error at EOF")
@@ -384,10 +402,7 @@ def p_argument(p):
 # -------- C++ Code Generation --------
 
 def _format_for_assignment(assign_node, include_type=True):
-    """Format an assignment node as a C++ snippet without redeclaration.
-
-    We now emit declarations separately, so this always returns "var = value".
-    """
+    """Format an assignment node as a C++ snippet."""
     var = assign_node["var"]
     value = assign_node["value"]
     return f"{var} = {value}"
@@ -418,29 +433,32 @@ def generate_cpp(parsed, indent=0, declared=None):
 
             cpp += f"{stmt['return_type']} {stmt['name']}({param_sig}) {{\n"
 
-            # Parameters are pre-declared, mark them as such
+            # Parameters are pre-declared
             func_declared = set(params)
             
-            # Collect ALL variables that need declaration (excluding parameters)
+            # Get variables that belong to THIS function only
+            func_vars = stmt.get("variables", set())
+            
+            # Collect variables to declare (excluding parameters)
             vars_to_declare = []
-            for var, dtype in symbol_table.items():
-                if var not in func_declared and dtype:
-                    vars_to_declare.append((var, dtype))
-                    func_declared.add(var)
+            for var in func_vars:
+                if var not in func_declared:
+                    dtype = symbol_table.get(var, "")
+                    if dtype:
+                        vars_to_declare.append((var, dtype))
+                        func_declared.add(var)
             
             # Emit all variable declarations at the top of function
             if vars_to_declare:
                 for var, dtype in vars_to_declare:
                     cpp += " " * ((indent + 1) * 4) + f"{dtype} {var};\n"
-                # Add blank line after declarations for readability
                 cpp += "\n"
             
-            # Generate function body (no more declarations will happen)
+            # Generate function body
             cpp += generate_cpp(stmt["body"], indent + 1, declared=func_declared)
             cpp += "}\n\n"
 
         elif stype == "assign":
-            # Simple assignment - no declaration needed
             cpp += space + _format_for_assignment(stmt, include_type=False) + ";\n"
 
         elif stype == "if":
@@ -474,13 +492,20 @@ def to_cpp(parsed):
     """Generate complete C++ program from parsed AST."""
     header = "#include <bits/stdc++.h>\nusing namespace std;\n\n"
     body = generate_cpp(parsed)
-    main = (
-        "int main() {\n"
-        f"    {parsed[0]['name']}();\n"
-        "    return 0;\n"
-        "}\n"
-    )
-    return header + body + main
+    has_main = any(func.get("name") == "main" for func in parsed if func.get("type") == "function")
 
-
+    if not has_main:
+        first_func = parsed[0]
+        first_func_name = first_func.get("name", "")
+        
+        main = (
+            "int main() {\n"
+            f"    {first_func_name}();\n"
+            "    return 0;\n"
+            "}\n"
+        )
+        return header + body + main
+    else:
+        return header + body
+    
 parser = yacc.yacc()
