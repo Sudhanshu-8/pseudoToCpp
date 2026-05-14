@@ -1,0 +1,15 @@
+\Fn BinarySearch(arr, low, high, x) {
+    \While (low <= high) {
+        mid \gets low + (high - low) / 2;
+        \If (arr[mid] == x) {
+            \KwRet mid;
+        }
+        \If (arr[mid] < x) {
+            low \gets mid + 1;
+        }
+        \Else {
+            high \gets mid - 1;
+        }
+    }
+    \KwRet -1;
+}

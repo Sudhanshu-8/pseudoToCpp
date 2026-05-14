@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from parser import parser, to_cpp, register_type_provider, valid_dtypes, MissingTypeError
 
 
@@ -34,20 +33,3 @@ ndef main():
 
 if __name__ == "__main__":
     main()
-=======
-from parser import parser, to_cpp
-
-with open("input.txt") as f:
-    data = f.read()
-
-print("🔹 Starting parsing... You’ll be asked for variable datatypes where needed.\n")
-
-result = parser.parse(data)
-
-cpp_code = to_cpp(result)
-print("\n✅ Generated C++ code:\n")
-print(cpp_code)
-
-with open("output.cpp", "w") as f:
-    f.write(cpp_code)
->>>>>>> 5b0bb2920e139ef8d09a02537253009599a6ea29

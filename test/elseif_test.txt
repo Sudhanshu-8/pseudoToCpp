@@ -1,0 +1,9 @@
+\Fn ElseIfTest(x) {
+    \If (x > 10) {
+        \KwRet 2;
+    } \Else \If (x > 0) {
+        \KwRet 1;
+    } \Else {
+        \KwRet 0;
+    }
+}

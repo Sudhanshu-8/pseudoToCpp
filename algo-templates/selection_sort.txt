@@ -1,0 +1,13 @@
+\Fn SelectionSort(A, n) {
+    \For (i \gets 0; i < n - 1; i \gets i + 1) {
+        minIndex \gets i;
+        \For (j \gets i + 1; j < n; j \gets j + 1) {
+            \If (A[j] < A[minIndex]) {
+                minIndex \gets j;
+            }
+        }
+        temp \gets A[minIndex];
+        A[minIndex] \gets A[i];
+        A[i] \gets temp;
+    }
+}

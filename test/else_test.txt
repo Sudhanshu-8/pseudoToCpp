@@ -1,0 +1,7 @@
+\Fn ElseTest(x) {
+    \If (x > 0) {
+        \KwRet 1;
+    } \Else {
+        \KwRet 0;
+    }
+}
